@@ -19,6 +19,12 @@ const createRows = () => {
     const rows: Row[] = []
     for (let i = 0; i < 2000; i += 1) {
         const cells = []
+
+        let sticky;
+
+        if (i === 0 || i === 1) {
+            sticky = 'top'
+        }
         for (let c = 0; c < 1000; c += 1){
             cells.push({
                 width: 120,
@@ -28,7 +34,8 @@ const createRows = () => {
 
         rows.push({
             height: 36,
-            cells
+            cells,
+            sticky
         })
     }
     return rows

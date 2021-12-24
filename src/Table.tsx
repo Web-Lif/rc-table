@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { CSSProperties, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import TableRow from './Row' 
@@ -11,6 +11,7 @@ const TableStyle = styled.div`
     width: '100%';
     border-top: 1px solid var(--rc-table-border-color, #ddd);
     border-right: 1px solid var(--rc-table-border-color, #ddd);
+    background-color: #fff;
 `
 
 interface TableProps<R> {
@@ -51,8 +52,8 @@ function Table<R> ({
 
     const getTransform = () => {
         if (tableRef.current) {
-            
-            return `translate3d(${viewportRows?.[0].cells?.[0].left || 0}px,${viewportRows?.[0].top || 0}px, 0px)`
+            const scrollRow = viewportRows.find(ele => ele.sticky === undefined)
+            return `translate3d(${scrollRow?.cells?.[0].left || 0}px,${(scrollRow?.top || 0)}px, 0px)`
         }
         return undefined
     }
@@ -89,24 +90,35 @@ function Table<R> ({
                         transform: getTransform(),
                     }}
                 >
-                    {viewportRows?.map((row) => (
-                        <TableRow
-                            style={{
-                                height: row.height,
-                                [('--rc-table-row-height') as any]: `${row.height}px`
-                            }}
-                        >
-                            {row.cells.map(cell => (
-                                <TableCell
-                                    style={{
-                                        width: cell.width
-                                    }}
-                                >
-                                    {cell.value}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
+                    {viewportRows?.map((row) => {
+                        const cssStyle: CSSProperties = {
+                            height: row.height,
+                            [('--rc-table-row-height') as any]: `${row.height}px`
+                        }
+                        if (row.sticky) {
+                            const scrollRow = viewportRows.find(ele => ele.sticky === undefined)
+                            if (scroll.top !== 0) {
+                                cssStyle.transform = `translate3d(0px, ${scroll.top - (scrollRow?.top || 0)}px, 0px)`
+                            }else {
+                                cssStyle.transform = `translate3d(0px, 0px, 0px)`
+                            }
+                        }
+                        return (
+                            <TableRow
+                                style={cssStyle}
+                            >
+                                {row.cells.map(cell => (
+                                    <TableCell
+                                        style={{
+                                            width: cell.width
+                                        }}
+                                    >
+                                        {cell.value}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        )
+                    })}
                 </TableStyle>
             </div>
         </div>

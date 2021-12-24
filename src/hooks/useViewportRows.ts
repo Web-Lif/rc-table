@@ -70,11 +70,13 @@ export const useViewportRows = ({
     let scrollWidth = 0
     let scrollHeight = 0
 
-    const cellPatchs: CellPatch[] = []
     const resRows: Row[] = []
 
     rows.forEach((row, index) => {
-        scrollHeight += row.height
+
+        if (row.sticky === undefined) {
+            scrollHeight += row.height
+        }
 
         // 开始的 Y 坐标点
         const rowStartTop = scrollHeight - row.height
@@ -93,7 +95,7 @@ export const useViewportRows = ({
                 scrollWidth += cell.width
             })
         }
-        if (rowState === 'viewpor' || rowState === 'outlet') {
+        if (rowState === 'viewpor' || rowState === 'outlet' || row.sticky) {
             const resCell: Cell[] = []
 
             let cellEndRight = 0
@@ -107,7 +109,6 @@ export const useViewportRows = ({
                     cellState = getCellState(cellStartLeft, cellEndRight, cellIndex < row.cells.length - 1 ? row.cells[cellIndex + 1].width : 0)
                 }
                 if (cellState === 'viewpor' || cellState === 'outlet') {
-                    
                     resCell.push({
                         ...cell,
                         left: cellStartLeft,
@@ -118,17 +119,16 @@ export const useViewportRows = ({
             resRows.push({
                 top: rowStartTop,
                 height: row.height,
+                sticky: row.sticky, 
                 cells: resCell
             })
         }
     })
 
-    console.log(resRows[0].top, scrollTop, scrollHeight)
     return {
         rows: resRows,
         scrollWidth,
-        scrollHeight,
-        cellPatchs
+        scrollHeight
     }
 }
 

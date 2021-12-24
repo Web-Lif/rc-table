@@ -18,4 +18,6 @@ export interface Row {
     cells: Cell[]
     /** 内部使用属性 */
     top?: number
+    /** 是否固定行 */
+    sticky?: 'top'
 }
