@@ -8,11 +8,15 @@ import { useViewportRows } from './hooks/useViewportRows'
 
 
 const TableStyle = styled.div`
-    width: '100%';
     border-top: 1px solid var(--rc-table-border-color, #ddd);
     border-right: 1px solid var(--rc-table-border-color, #ddd);
-    background-color: #fff;
 `
+
+
+const TableWrapperStyle = styled.div`
+    width: 100%;
+    background-color: #fff;
+` 
 
 interface TableProps<R> {
     /** 宽度 */
@@ -59,7 +63,7 @@ function Table<R> ({
     }
 
     return (
-        <div
+        <TableStyle
             ref={tableRef}
             style={{
                 width,
@@ -85,8 +89,9 @@ function Table<R> ({
                     overflow: 'hidden'
                 }}
             >
-                <TableStyle
+                <TableWrapperStyle
                     style={{
+                      
                         transform: getTransform(),
                     }}
                 >
@@ -119,9 +124,9 @@ function Table<R> ({
                             </TableRow>
                         )
                     })}
-                </TableStyle>
+                </TableWrapperStyle>
             </div>
-        </div>
+        </TableStyle>
     )
 }
 export default Table
