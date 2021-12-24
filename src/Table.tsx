@@ -18,7 +18,7 @@ const TableWrapperStyle = styled.div`
     background-color: #fff;
 ` 
 
-interface TableProps<R> {
+interface TableProps {
     /** 宽度 */
     width: number
     /** 高度 */
@@ -27,11 +27,11 @@ interface TableProps<R> {
     rows: Row[]
 }
 
-function Table<R> ({
+function Table ({
     width,
     height,
     rows
-}: TableProps<R>) {
+}: TableProps) {
     
     const tableRef = useRef<HTMLDivElement>(null)
     const [scroll, setScroll] = useState<{
