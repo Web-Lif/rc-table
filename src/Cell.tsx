@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const CellStyled = styled.div`
     display: inline-block;
-    border-left: 1px solid var(--rc-table-border-color, #ddd);
+    border-right: 1px solid var(--rc-table-border-color, #ddd);
     padding: 0 8px;
     text-overflow: ellipsis;
     height: 100%;

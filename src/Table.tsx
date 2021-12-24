@@ -10,8 +10,8 @@ import { useViewportRows } from './hooks/useViewportRows'
 const TableStyle = styled.div`
     border-top: 1px solid var(--rc-table-border-color, #ddd);
     border-right: 1px solid var(--rc-table-border-color, #ddd);
+    border-left: 1px solid var(--rc-table-border-color, #ddd);
 `
-
 
 const TableWrapperStyle = styled.div`
     width: 100%;
