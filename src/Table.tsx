@@ -1,9 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
+import styled from 'styled-components'
+
 import TableRow from './Row' 
 import TableCell from './Cell' 
 import { Row } from './types'
 import { useViewportRows } from './hooks/useViewportRows'
 
+
+const TableStyle = styled.div`
+    width: '100%';
+    border-top: 1px solid var(--rc-table-border-color, #ddd);
+    border-right: 1px solid var(--rc-table-border-color, #ddd);
+`
 
 interface TableProps<R> {
     /** 宽度 */
@@ -44,7 +52,7 @@ function Table<R> ({
     const getTransform = () => {
         if (tableRef.current) {
             
-            return `translate(${viewportRows?.[0].cells?.[0].left || 0}px,${viewportRows?.[0].top || 0}px)`
+            return `translate3d(${viewportRows?.[0].cells?.[0].left || 0}px,${viewportRows?.[0].top || 0}px, 0px)`
         }
         return undefined
     }
@@ -76,16 +84,16 @@ function Table<R> ({
                     overflow: 'hidden'
                 }}
             >
-                <div
+                <TableStyle
                     style={{
                         transform: getTransform(),
-                        width: '100%'
                     }}
                 >
                     {viewportRows?.map((row) => (
                         <TableRow
                             style={{
-                                height: row.height
+                                height: row.height,
+                                [('--rc-table-row-height') as any]: `${row.height}px`
                             }}
                         >
                             {row.cells.map(cell => (
@@ -99,7 +107,7 @@ function Table<R> ({
                             ))}
                         </TableRow>
                     ))}
-                </div>
+                </TableStyle>
             </div>
         </div>
     )

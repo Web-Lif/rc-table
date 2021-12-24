@@ -25,7 +25,6 @@ export const useViewportRows = ({
     scrollTop,
     scrollLeft,
 }: ViewportRowsArgs) => {
-
     const getRowState = (
         rowStartTop: number,
         rowEndBottom: number,
@@ -124,6 +123,7 @@ export const useViewportRows = ({
         }
     })
 
+    console.log(resRows[0].top, scrollTop, scrollHeight)
     return {
         rows: resRows,
         scrollWidth,
