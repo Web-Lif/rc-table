@@ -1,23 +1,25 @@
 export interface Cell {
     /** 单元格的宽度 */
-    width: number
+    width: number;
     /** 单元格的值信息 */
-    value: string
+    value: string;
     /** 跨行合并 */
-    rowSpan?: number
+    rowSpan?: number;
     /** 跨列合并 */
-    colSpan?: number
+    colSpan?: number;
     /** 内部使用属性 */
-    left?: number
+    left?: number;
 }
 
 export interface Row {
     /** 表格的高度 */
-    height: number
+    height: number;
     /** 表格的单元格信息 */
-    cells: Cell[]
+    cells: Cell[];
     /** 内部使用属性 */
-    top?: number
+    top?: number;
     /** 是否固定行 */
-    sticky?: 'top'
+    sticky?: 'top';
+    /** 行的的类名 */
+    className?: string;
 }

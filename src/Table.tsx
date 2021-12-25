@@ -110,7 +110,7 @@ function Table({ width, height, rows }: TableProps) {
                             }
                         }
                         return (
-                            <TableRow style={cssStyle}>
+                            <TableRow className={row.className} style={cssStyle}>
                                 {row.cells.map((cell) => (
                                     <TableCell
                                         style={{
