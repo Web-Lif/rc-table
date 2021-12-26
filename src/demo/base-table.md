@@ -19,15 +19,18 @@ const createRows = () => {
         const cells = [];
 
         let sticky;
+        let selectd;
 
         if (i === 0 || i === 1) {
             sticky = 'top';
+            selectd = false;
         }
         for (let c = 0; c < 1000; c += 1) {
             cells.push({
                 width: 120,
                 value: `${i} - ${c}`,
                 key: `${i}-${c}`,
+                selectd,
             });
         }
 

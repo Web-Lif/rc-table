@@ -7,6 +7,9 @@ const RowStyled = styled.div`
     width: 100%;
     box-sizing: border-box;
     background-color: inherit;
+    &:hover {
+        background-color: var(--rc-table-row-hover-background-color, #f5f5f5);
+    }
 `
 
 interface RowProps extends HTMLAttributes<HTMLDivElement>{
