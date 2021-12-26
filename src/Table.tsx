@@ -1,15 +1,20 @@
-import React, { CSSProperties, ReactNode, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, Key, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import anime from 'animejs'
 
 import TableRow from './Row';
 import TableCell from './Cell';
 import { Cell, Row } from './types';
 import { useViewportRows } from './hooks/useViewportRows';
+import { writeText } from './utils/clipboard'
 
 const TableStyle = styled.div`
     border-top: 1px solid var(--rc-table-border-color, #ddd);
     border-right: 1px solid var(--rc-table-border-color, #ddd);
     border-left: 1px solid var(--rc-table-border-color, #ddd);
+    .rc-table-cell-select {
+        box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
+    }
 `;
 
 const TableWrapperStyle = styled.div`
@@ -24,7 +29,6 @@ interface TableProps {
     height: number;
     /** 当前的行信息 */
     rows: Row[];
-
     /** 渲染单元格的事件 */
     onCellRender?: (element: JSX.Element,cells: Cell) => JSX.Element
     /** 渲染行触发的事件 */
@@ -73,6 +77,8 @@ function Table({
         return viewportRows.find((ele) => ele.sticky === undefined);
     }, [viewportRows]);
 
+    const [cellKey, setCellKey] = useState<Key | null>(null)
+
     return (
         <TableStyle
             ref={tableRef}
@@ -80,6 +86,7 @@ function Table({
                 width,
                 height,
                 overflow: 'auto',
+                ['--rc-table-row-sticky-top' as any]: `${scroll.top - (scrollRow?.top || 0)}px`,
             }}
             onScroll={() => {
                 if (tableRef.current) {
@@ -103,7 +110,6 @@ function Table({
                 <TableWrapperStyle
                     style={{
                         transform: getTransform(),
-                        ['--rc-table-row-sticky-top' as any]: `${scroll.top - (scrollRow?.top || 0)}px`,
                     }}
                 >
                     {viewportRows?.map((row) => {
@@ -122,12 +128,40 @@ function Table({
                             <TableRow
                                 className={row.className}
                                 style={cssStyle}
+                                key={row.key}
                             >
                                 {row.cells.map((cell) => {
+                                    const isSelect = cell.key === cellKey
                                     const cellElement = (
                                         <TableCell
+                                            className={isSelect ? 'rc-table-cell-select' : undefined}
                                             style={{
                                                 width: cell.width,
+                                            }}
+                                            onClick={() => {
+                                                if (cell.key && cell.selectd !== false) {
+                                                    setCellKey(cell.key)
+                                                }
+                                            }}
+                                            key={cell.key}
+                                            tabIndex={-1}
+                                            onKeyDown={(e) => {
+                                                const text = e.currentTarget.textContent
+                                                // ctrl + c copy text
+                                                if(e.ctrlKey && e.key === 'c' && text) {
+                                                    writeText(text)
+                                                    const element = e.currentTarget
+                                                    anime({
+                                                        targets: element,
+                                                        keyframes: [
+                                                            { backgroundColor: '#fce4ec'},
+                                                            { backgroundColor: 'inherit'}
+                                                        ],
+                                                        easing: 'steps(10)',
+                                                        duration: 200,
+                                                        direction: 'alternate'
+                                                    })
+                                                }
                                             }}
                                         >
                                             {cell.value}

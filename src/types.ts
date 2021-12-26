@@ -1,3 +1,5 @@
+import { Key } from "react";
+
 export interface Cell {
     /** 单元格的宽度 */
     width: number;
@@ -9,6 +11,10 @@ export interface Cell {
     colSpan?: number;
     /** 内部使用属性 */
     left?: number;
+    /** 单元格是否可以选中 */
+    selectd?: boolean;
+    /** 所在的真实的索引 */
+    key?: Key
 }
 
 export interface Row {
@@ -22,4 +28,6 @@ export interface Row {
     sticky?: 'top';
     /** 行的的类名 */
     className?: string;
+    /** 所在的真实的索引 */
+    key?: Key
 }

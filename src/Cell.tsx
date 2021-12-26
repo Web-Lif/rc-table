@@ -9,6 +9,10 @@ const CellStyled = styled.div`
     text-overflow: ellipsis;
     height: 100%;
     line-height: var(--rc-table-row-height);
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: none;
+    background-color: inherit;
 `
 
 interface CellProps extends HTMLAttributes<HTMLDivElement>{

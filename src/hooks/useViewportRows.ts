@@ -31,13 +31,13 @@ export const useViewportRows = ({
         outletHeight: number
     ) : 'outlet' | 'viewpor' | 'virtual'  =>{
         if (
-            (scrollTop - rowStartTop > outletHeight) || 
+            (scrollTop - rowStartTop > outletHeight) ||
             (rowEndBottom - scrollTop - height > outletHeight)
         ) {
             return 'virtual'
         }
         if (
-            (scrollTop - rowStartTop > 0 && scrollTop - rowStartTop < outletHeight) || 
+            (scrollTop - rowStartTop > 0 && scrollTop - rowStartTop < outletHeight) ||
             (rowEndBottom - scrollTop - height > 0 && rowEndBottom - scrollTop - height < outletHeight)
         ) {
             return 'outlet'
@@ -52,13 +52,13 @@ export const useViewportRows = ({
         outletWidth: number
     ): 'outlet' | 'viewpor' | 'virtual' => {
         if (
-            (scrollLeft - cellStartLeft > outletWidth) || 
+            (scrollLeft - cellStartLeft > outletWidth) ||
             (cellEndRight - scrollLeft - width > outletWidth)
         ) {
             return 'virtual'
         }
         if (
-            (scrollLeft - cellStartLeft > 0 && scrollLeft - cellStartLeft < outletWidth) || 
+            (scrollLeft - cellStartLeft > 0 && scrollLeft - cellStartLeft < outletWidth) ||
             (cellEndRight - scrollTop - width > 0 && cellEndRight - scrollTop - width < outletWidth)
         ) {
             return 'outlet'
@@ -117,10 +117,9 @@ export const useViewportRows = ({
             })
 
             resRows.push({
+                ...row,
                 top: rowStartTop,
-                height: row.height,
-                sticky: row.sticky, 
-                cells: resCell
+                cells: resCell,
             })
         }
     })
