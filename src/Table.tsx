@@ -1,9 +1,9 @@
-import React, { CSSProperties, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, ReactNode, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import TableRow from './Row';
 import TableCell from './Cell';
-import { Row } from './types';
+import { Cell, Row } from './types';
 import { useViewportRows } from './hooks/useViewportRows';
 
 const TableStyle = styled.div`
@@ -24,9 +24,20 @@ interface TableProps {
     height: number;
     /** 当前的行信息 */
     rows: Row[];
+
+    /** 渲染单元格的事件 */
+    onCellRender?: (element: JSX.Element,cells: Cell) => JSX.Element
+    /** 渲染行触发的事件 */
+    onRowRender?: (element: JSX.Element, row: Row) => JSX.Element
 }
 
-function Table({ width, height, rows }: TableProps) {
+function Table({
+    width,
+    height,
+    rows,
+    onCellRender,
+    onRowRender
+}: TableProps) {
     const tableRef = useRef<HTMLDivElement>(null);
     const [scroll, setScroll] = useState<{
         top: number;
@@ -92,9 +103,7 @@ function Table({ width, height, rows }: TableProps) {
                 <TableWrapperStyle
                     style={{
                         transform: getTransform(),
-                        ['--rc-table-row-sticky-top' as any]: `${
-                            scroll.top - (scrollRow?.top || 0)
-                        }px`,
+                        ['--rc-table-row-sticky-top' as any]: `${scroll.top - (scrollRow?.top || 0)}px`,
                     }}
                 >
                     {viewportRows?.map((row) => {
@@ -109,19 +118,32 @@ function Table({ width, height, rows }: TableProps) {
                                 cssStyle.transform = `translate3d(0px, 0px, 0px)`;
                             }
                         }
-                        return (
-                            <TableRow className={row.className} style={cssStyle}>
-                                {row.cells.map((cell) => (
-                                    <TableCell
-                                        style={{
-                                            width: cell.width,
-                                        }}
-                                    >
-                                        {cell.value}
-                                    </TableCell>
-                                ))}
+                        const rowElement = (
+                            <TableRow
+                                className={row.className}
+                                style={cssStyle}
+                            >
+                                {row.cells.map((cell) => {
+                                    const cellElement = (
+                                        <TableCell
+                                            style={{
+                                                width: cell.width,
+                                            }}
+                                        >
+                                            {cell.value}
+                                        </TableCell>
+                                    )
+                                    if (onCellRender) {
+                                        return onCellRender(cellElement, cell)
+                                    }
+                                    return cellElement
+                                })}
                             </TableRow>
-                        );
+                        )
+                        if (onRowRender){
+                            return onRowRender(rowElement, row)
+                        }
+                        return rowElement
                     })}
                 </TableWrapperStyle>
             </div>

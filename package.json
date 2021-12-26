@@ -21,9 +21,6 @@
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [
       "prettier --write"
-    ],
-    "*.ts?(x)": [
-      "prettier --parser=typescript --write"
     ]
   },
   "peerDependencies": {
@@ -45,7 +42,6 @@
     "yorkie": "^2.0.0"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
     "styled-components": "^5.3.3"
   }
 }
