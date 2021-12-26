@@ -151,16 +151,10 @@ function Table({
                                                 if(e.ctrlKey && e.key === 'c' && text) {
                                                     writeText(text)
                                                     const element = e.currentTarget
-                                                    anime({
-                                                        targets: element,
-                                                        keyframes: [
-                                                            { backgroundColor: '#fce4ec'},
-                                                            { backgroundColor: 'inherit'}
-                                                        ],
-                                                        easing: 'steps(10)',
-                                                        duration: 200,
-                                                        direction: 'alternate'
-                                                    })
+                                                    element.style.backgroundColor = '#fce4ec'
+                                                    setTimeout(() => {
+                                                        element.style.backgroundColor = 'inherit'
+                                                    }, 500)
                                                 }
                                             }}
                                         >

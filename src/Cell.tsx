@@ -13,6 +13,7 @@ const CellStyled = styled.div`
     overflow: hidden;
     user-select: none;
     background-color: inherit;
+    transition: background-color .5s;
 `
 
 interface CellProps extends HTMLAttributes<HTMLDivElement>{
