@@ -1,6 +1,11 @@
 {
   "name": "@weblif/rc-table",
   "version": "0.0.1-canary",
+  "author": "苯苯 <854363956@qq.com>",
+  "repository": {
+      "url": "https://github.com/Web-Lif/rc-table"
+  },
+  "homepage": "https://github.com/Web-Lif/rc-table",
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",
@@ -42,5 +47,6 @@
   },
   "dependencies": {
     "styled-components": "^5.3.3"
-  }
+  },
+  "license": "MIT"
 }
