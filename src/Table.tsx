@@ -65,9 +65,7 @@ function Table({
     const getTransform = () => {
         if (tableRef.current) {
             const scrollRow = viewportRows.find((ele) => ele.sticky === undefined);
-            return `translate3d(${scrollRow?.cells?.[0].left || 0}px,${
-                scrollRow?.top || 0
-            }px, 0px)`;
+            return `translate3d(${scrollRow?.cells?.[0].left || 0}px,${scrollRow?.top || 0}px, 0px)`;
         }
         return undefined;
     };

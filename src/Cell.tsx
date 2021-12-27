@@ -13,6 +13,7 @@ const CellStyled = styled.div`
     overflow: hidden;
     user-select: none;
     background-color: inherit;
+    box-sizing: border-box;
     transition: background-color .5s;
 `
 

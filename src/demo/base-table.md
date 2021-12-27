@@ -37,7 +37,6 @@ const createRows = () => {
         rows.push({
             height: 35,
             cells,
-            sticky,
             key: i,
         });
     }
