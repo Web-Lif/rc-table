@@ -21,17 +21,33 @@ const TableWrapperStyle = styled.div`
     background-color: #fff;
 `;
 
+interface RowClickParam {
+    event:  React.MouseEvent<HTMLDivElement, MouseEvent>
+    row: Row
+}
+
 interface TableProps {
+
     /** 宽度 */
     width: number;
+
     /** 高度 */
     height: number;
+
     /** 当前的行信息 */
     rows: Row[];
+
     /** 渲染单元格的事件 */
     onCellRender?: (element: JSX.Element,cells: Cell) => JSX.Element
+
     /** 渲染行触发的事件 */
     onRowRender?: (element: JSX.Element, row: Row) => JSX.Element
+
+    /** 表格单击行触发的事件 */
+    onRowClick?: (param: RowClickParam) => void
+
+    /** 表格双击行触发的事件 */
+    onRowDoubleClick?: (param: RowClickParam) => void
 }
 
 function Table({
@@ -39,7 +55,9 @@ function Table({
     height,
     rows,
     onCellRender,
-    onRowRender
+    onRowRender,
+    onRowClick,
+    onRowDoubleClick
 }: TableProps) {
     const tableRef = useRef<HTMLDivElement>(null);
     const [scroll, setScroll] = useState<{
@@ -126,6 +144,18 @@ function Table({
                                 className={row.className}
                                 style={cssStyle}
                                 key={row.key}
+                                onClick={(e) => {
+                                    onRowClick?.({
+                                        event: e,
+                                        row,
+                                    })
+                                }}
+                                onDoubleClick={(e) => {
+                                    onRowDoubleClick?.({
+                                        event: e,
+                                        row,
+                                    })
+                                }}
                             >
                                 {row.cells.map((cell) => {
                                     const isSelect = cell.key === cellKey
