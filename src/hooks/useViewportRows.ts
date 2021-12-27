@@ -85,7 +85,7 @@ export const useViewportRows = ({
 
         let rowState = 'viewpor'
         if (rowStartTop < scrollTop + height) {
-            rowState = getRowState(rowStartTop, rowEndBottom, index > 0 ? rows[index - 1].height : 0)
+            rowState = getRowState(rowStartTop, rowEndBottom, index > 0 ? rows[index - 1].height : row.height)
         } else {
             rowState = getRowState(rowStartTop, rowEndBottom, index < rows.length - 1 ? rows[index + 1].height : 0)
         }
@@ -104,7 +104,7 @@ export const useViewportRows = ({
                 const cellStartLeft = cellEndRight - cell.width
                 let cellState = 'viewpor'
                 if (cellStartLeft < scrollLeft + width) {
-                    cellState = getCellState(cellStartLeft, cellEndRight, cellIndex > 0 ? row.cells[cellIndex - 1].width : 0)
+                    cellState = getCellState(cellStartLeft, cellEndRight, cellIndex > 0 ? row.cells[cellIndex - 1].width : row.cells[0].width)
                 } else {
                     cellState = getCellState(cellStartLeft, cellEndRight, cellIndex < row.cells.length - 1 ? row.cells[cellIndex + 1].width : 0)
                 }

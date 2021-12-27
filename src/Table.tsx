@@ -1,6 +1,5 @@
 import React, { CSSProperties, Key, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import anime from 'animejs'
 
 import TableRow from './Row';
 import TableCell from './Cell';
