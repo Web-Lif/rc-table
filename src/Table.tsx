@@ -24,6 +24,7 @@ const TableWrapperStyle = styled.div`
 interface RowClickParam {
     event:  React.MouseEvent<HTMLDivElement, MouseEvent>
     row: Row
+    index: number
 }
 
 interface TableProps {
@@ -127,7 +128,7 @@ function Table({
                         transform: getTransform(),
                     }}
                 >
-                    {viewportRows?.map((row) => {
+                    {viewportRows?.map((row, rowIndex) => {
                         const cssStyle: CSSProperties = {
                             height: row.height,
                             ['--rc-table-row-height' as any]: `${row.height}px`,
@@ -148,12 +149,14 @@ function Table({
                                     onRowClick?.({
                                         event: e,
                                         row,
+                                        index: rowIndex
                                     })
                                 }}
                                 onDoubleClick={(e) => {
                                     onRowDoubleClick?.({
                                         event: e,
                                         row,
+                                        index: rowIndex
                                     })
                                 }}
                             >
