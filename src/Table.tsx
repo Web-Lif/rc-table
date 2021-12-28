@@ -11,6 +11,8 @@ const TableStyle = styled.div`
     border-top: 1px solid var(--rc-table-border-color, #ddd);
     border-right: 1px solid var(--rc-table-border-color, #ddd);
     border-left: 1px solid var(--rc-table-border-color, #ddd);
+    border-bottom: 1px solid var(--rc-table-border-color, #ddd);
+    border-collapse: collapse;
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
     }
@@ -140,6 +142,11 @@ function Table({
                                 cssStyle.transform = `translate3d(0px, 0px, 0px)`;
                             }
                         }
+
+                        if (row.key === rows[rows.length -1].key) {
+                            cssStyle.borderBottom = 'initial'
+                        }
+                        
                         const rowElement = (
                             <TableRow
                                 className={row.className}
