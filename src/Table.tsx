@@ -1,4 +1,4 @@
-import React, { CSSProperties, Key, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, Key, ReactElement, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import TableRow from './Row';
@@ -41,10 +41,10 @@ interface TableProps {
     rows: Row[];
 
     /** 渲染单元格的事件 */
-    onCellRender?: (element: JSX.Element,cells: Cell) => JSX.Element
+    onCellRender?: (element: ReactElement,cells: Cell) => ReactElement
 
     /** 渲染行触发的事件 */
-    onRowRender?: (element: JSX.Element, row: Row) => JSX.Element
+    onRowRender?: (element: ReactElement, row: Row) => ReactElement
 
     /** 表格单击行触发的事件 */
     onRowClick?: (param: RowClickParam) => void
@@ -146,7 +146,7 @@ function Table({
                         if (row.key === rows[rows.length -1].key) {
                             cssStyle.borderBottom = 'initial'
                         }
-                        
+
                         const rowElement = (
                             <TableRow
                                 className={row.className}
@@ -171,7 +171,7 @@ function Table({
                                     const isSelect = cell.key === cellKey
                                     const cellElement = (
                                         <TableCell
-                                            className={isSelect ? 'rc-table-cell-select' : undefined}
+                                            className={isSelect ? `rc-table-cell-select ${cell.className || ''}` : cell.className}
                                             style={{
                                                 width: cell.width,
                                             }}

@@ -1,10 +1,10 @@
-import { Key } from "react";
+import { Key, ReactNode } from "react";
 
 export interface Cell {
     /** 单元格的宽度 */
     width: number;
     /** 单元格的值信息 */
-    value: string;
+    value: ReactNode;
     /** 跨行合并 */
     rowSpan?: number;
     /** 跨列合并 */
@@ -13,6 +13,8 @@ export interface Cell {
     left?: number;
     /** 单元格是否可以选中 */
     selectd?: boolean;
+    /** 单元格的类名 */
+    className?: string;
     /** 所在的真实的索引 */
     key?: Key
 }
