@@ -190,7 +190,9 @@ function Table({
             if (row.key === rows[rows.length -1].key) {
                 cssStyle.borderBottom = 'initial'
             }
-
+            if (row.sticky) {
+                return null
+            }
             return createRowElement(row, cssStyle)
         })
 
