@@ -3,7 +3,7 @@
   "version": "0.0.8-canary",
   "author": "苯苯 <854363956@qq.com>",
   "repository": {
-      "url": "https://github.com/Web-Lif/rc-table"
+    "url": "https://github.com/Web-Lif/rc-table"
   },
   "homepage": "https://github.com/Web-Lif/rc-table",
   "scripts": {

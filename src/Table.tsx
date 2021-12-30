@@ -1,6 +1,5 @@
 import React, { CSSProperties, Key, ReactElement, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-
 import TableRow from './Row';
 import TableCell from './Cell';
 import { Cell, Row } from './types';
@@ -83,20 +82,20 @@ function Table({
         scrollLeft: scroll.left,
     });
 
+    const scrollRow = useMemo(() => {
+        return viewportRows?.[0]
+    }, [viewportRows]);
+
     const getTransform = () => {
         if (tableRef.current) {
-            const scrollRow = viewportRows.find((ele) => ele.sticky === undefined);
             return `translate3d(${scrollRow?.cells?.[0].left || 0}px,${scrollRow?.top || 0}px, 0px)`;
         }
         return undefined;
     };
 
-    const scrollRow = useMemo(() => {
-        return viewportRows.find((ele) => ele.sticky === undefined);
-    }, [viewportRows]);
-
     const [cellKey, setCellKey] = useState<Key | null>(null)
 
+    const ticking = useRef<boolean>(false);
     return (
         <TableStyle
             ref={tableRef}
@@ -107,12 +106,18 @@ function Table({
                 ['--rc-table-row-sticky-top' as any]: `${scroll.top - (scrollRow?.top || 0)}px`,
             }}
             onScroll={() => {
-                if (tableRef.current) {
-                    const { scrollTop, scrollLeft } = tableRef.current;
-                    setScroll({
-                        top: scrollTop,
-                        left: scrollLeft,
+                if (!ticking.current) {
+                    requestAnimationFrame(() => {
+                        if (tableRef.current) {
+                            const { scrollTop, scrollLeft } = tableRef.current;
+                            setScroll({
+                                top: scrollTop,
+                                left: scrollLeft,
+                            });
+                        }
+                        ticking.current = false;
                     });
+                    ticking.current = true;
                 }
             }}
         >
@@ -135,13 +140,6 @@ function Table({
                             height: row.height,
                             ['--rc-table-row-height' as any]: `${row.height}px`,
                         };
-                        if (row.sticky) {
-                            if (scroll.top !== 0) {
-                                cssStyle.transform = `translate3d(0px, var(--rc-table-row-sticky-top), 0px)`;
-                            } else {
-                                cssStyle.transform = `translate3d(0px, 0px, 0px)`;
-                            }
-                        }
 
                         if (row.key === rows[rows.length -1].key) {
                             cssStyle.borderBottom = 'initial'

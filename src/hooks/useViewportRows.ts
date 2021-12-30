@@ -74,9 +74,7 @@ export const useViewportRows = ({
 
     rows.forEach((row, index) => {
 
-        if (row.sticky === undefined) {
-            scrollHeight += row.height
-        }
+        scrollHeight += row.height
 
         // 开始的 Y 坐标点
         const rowStartTop = scrollHeight - row.height
