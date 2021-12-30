@@ -106,7 +106,6 @@ function Table({
     const scrollRow = viewportRows?.[0]
     const getTransform = () => {
         if (tableRef.current) {
-            console.log(scrollRow?.cells?.[0])
             return `translate3d(${scrollRow?.cells?.[0]?.left || 0}px,${scrollRow?.top || 0}px, 0px)`;
         }
         return undefined;
