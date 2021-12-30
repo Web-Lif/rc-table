@@ -38,6 +38,7 @@ const createRows = () => {
             height: 35,
             cells,
             key: i,
+            sticky
         });
     }
     return rows;

@@ -103,7 +103,6 @@ function Table({
                 width,
                 height,
                 overflow: 'auto',
-                ['--rc-table-row-sticky-top' as any]: `${scroll.top - (scrollRow?.top || 0)}px`,
             }}
             onScroll={() => {
                 if (!ticking.current) {

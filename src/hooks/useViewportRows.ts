@@ -93,7 +93,7 @@ export const useViewportRows = ({
                 scrollWidth += cell.width
             })
         }
-        if (rowState === 'viewpor' || rowState === 'outlet' || row.sticky) {
+        if (rowState === 'viewpor' || rowState === 'outlet') {
             const resCell: Cell[] = []
 
             let cellEndRight = 0
