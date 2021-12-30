@@ -5,6 +5,7 @@ import styled from 'styled-components'
 const CellStyled = styled.div`
     display: inline-block;
     border-right: 1px solid var(--rc-table-border-color, #ddd);
+    border-bottom: 1px solid var(--rc-table-border-color, #ddd);
     padding: 0 8px;
     text-overflow: ellipsis;
     height: 100%;
@@ -12,9 +13,8 @@ const CellStyled = styled.div`
     white-space: nowrap;
     overflow: hidden;
     user-select: none;
-    background-color: inherit;
     box-sizing: border-box;
-    transition: background-color .5s;
+    background-color: var(--rc-table-background-color, #fff);
 `
 
 interface CellProps extends HTMLAttributes<HTMLDivElement>{

@@ -47,7 +47,7 @@ const createRows = () => {
 let rows = createRows();
 
 const BaseTable = () => {
-    return <Table width={1200} height={600} rows={rows} />;
+    return <Table width={1200} debug height={600} rows={rows} />;
 };
 
 export default BaseTable;

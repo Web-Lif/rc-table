@@ -3,10 +3,9 @@ import styled from 'styled-components'
 
 
 const RowStyled = styled.div`
-    border-bottom: 1px solid var(--rc-table-border-color, #ddd);
     width: 100%;
     box-sizing: border-box;
-    background-color: inherit;
+    white-space: nowrap;
     &:hover {
         background-color: var(--rc-table-row-hover-background-color, #f5f5f5);
     }
