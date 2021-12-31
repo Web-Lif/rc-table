@@ -132,7 +132,7 @@ function Table({
     const ticking = useRef<boolean>(false);
 
 
-    const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}) => {
+    const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}, key?: Key) => {
         const isSelect = cell.key === cellKey
         return (
             <TableCell
@@ -146,7 +146,7 @@ function Table({
                         setCellKey(cell.key)
                     }
                 }}
-                key={`${cell.key}-${cell.sticky || ''}`}
+                key={`${cell.key}-${cell.sticky || ''}-${key || ''}`}
                 tabIndex={-1}
                 onKeyDown={(e) => {
                     const text = e.currentTarget.textContent
@@ -167,6 +167,7 @@ function Table({
     }
 
     const createRowElement = (row: Row, cssStyle: CSSProperties, key?: Key) => {
+        const rowKey = `${row.key}-${row.sticky || ''}-${key || ''}`
         let rowElement = (
             <TableRow
                 className={row.className}
@@ -175,7 +176,7 @@ function Table({
                     ['--rc-table-row-height' as any]: `${row.height}px`,
                     ...cssStyle,
                 }}
-                key={`${row.key}-${row.sticky || ''}-${key || ''}`}
+                key={rowKey}
                 onClick={(e) => {
                     onRowClick?.({
                         event: e,
@@ -190,7 +191,7 @@ function Table({
                 }}
             >
                 {row.cells.map((cell) => {
-                    const cellElement = createCellElement(cell)
+                    const cellElement = createCellElement(cell, {}, rowKey)
                     if (onCellRender) {
                         return onCellRender(cellElement, cell)
                     }
@@ -308,7 +309,7 @@ function Table({
                         }, 'StickyRightRowWrapper')
                     }
                     if (row.sticky) {
-                        return <div style={{ height: row.height }}/>
+                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
