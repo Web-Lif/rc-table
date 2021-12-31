@@ -156,7 +156,7 @@ function Table({
                         const element = e.currentTarget
                         element.style.backgroundColor = '#fce4ec'
                         setTimeout(() => {
-                            element.style.backgroundColor = 'inherit'
+                            element.style.backgroundColor = 'var(--rc-table-background-color, #fff)'
                         }, 500)
                     }
                 }}
