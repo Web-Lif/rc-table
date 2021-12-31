@@ -5,6 +5,7 @@ import TableCell from './Cell';
 import { Cell, Row } from './types';
 import { useViewportRows } from './hooks/useViewportRows';
 import { writeText } from './utils/clipboard'
+import { getScrollbarWidth } from './utils/browser'
 
 const TableStyle = styled.div`
     border-top: 1px solid var(--rc-table-border-color, #ddd);
@@ -24,13 +25,13 @@ const TableWrapperStyle = styled.div`
     contain: style;
 `;
 
-const StickyLeftCellWrapper = styled.div`
+const StickyLeftRowWrapper = styled.div`
     position: absolute;
     z-index: 11;
     box-shadow: 2px 0 5px -2px hsl(0deg 0% 53% / 30%);
 `
 
-const StickyRightCellWrapper = styled.div`
+const StickyRightRowWrapper = styled.div`
     position: absolute;
     z-index: 11;
     box-shadow: -2px 0 5px -2px hsl(0deg 0% 53% / 30%);
@@ -163,10 +164,9 @@ function Table({
                 {cell.value}
             </TableCell>
         )
-        
     }
 
-    const createRowElement = (row: Row, cssStyle: CSSProperties) => {
+    const createRowElement = (row: Row, cssStyle: CSSProperties, key?: Key) => {
         let rowElement = (
             <TableRow
                 className={row.className}
@@ -175,7 +175,7 @@ function Table({
                     ['--rc-table-row-height' as any]: `${row.height}px`,
                     ...cssStyle,
                 }}
-                key={`${row.key}-${row.sticky || ''}`}
+                key={`${row.key}-${row.sticky || ''}-${key || ''}`}
                 onClick={(e) => {
                     onRowClick?.({
                         event: e,
@@ -214,7 +214,7 @@ function Table({
             }
 
             if (row.sticky) {
-                return <div style={{ height: row.height }} />
+                return <div key={`${row.key}-padding`} style={{ height: row.height }} />
             }
 
             return createRowElement(row, cssStyle)
@@ -273,7 +273,7 @@ function Table({
                 overflow: 'auto',
             }}
         >
-            <StickyLeftCellWrapper
+            <StickyLeftRowWrapper
                 style={{
                     marginLeft: scroll.left,
                     marginTop: scrollRow?.top || 0,
@@ -284,19 +284,19 @@ function Table({
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
-                        })
+                        }, 'StickyLeftRowWrapper')
                     }
                     if (row.sticky) {
-                        return <div style={{ height: row.height }}/>
+                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
-                    })
+                    }, 'StickyLeftRowWrapper')
                 })}
-            </StickyLeftCellWrapper>
-            <StickyRightCellWrapper
+            </StickyLeftRowWrapper>
+            <StickyRightRowWrapper
                 style={{
-                    marginLeft: (scroll.left + width) - viewportStickyRowRightWidth,
+                    marginLeft: (scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth(),
                     marginTop: scrollRow?.top || 0,
                 }}
             >
@@ -305,16 +305,16 @@ function Table({
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
-                        })
+                        }, 'StickyRightRowWrapper')
                     }
                     if (row.sticky) {
                         return <div style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
-                    })
+                    }, 'StickyLeftRowWrapper')
                 })}
-            </StickyRightCellWrapper>
+            </StickyRightRowWrapper>
             <div
                 style={{
                     height: scrollHeight,
