@@ -191,6 +191,9 @@ function Table({
                 }}
             >
                 {row.cells.map((cell) => {
+                    if (cell.sticky &&  key === undefined) {
+                        return <div style={{ width: cell.width }} key={`${rowKey}-padding-${cell.key}`}/>
+                    }
                     const cellElement = createCellElement(cell, {}, rowKey)
                     if (onCellRender) {
                         return onCellRender(cellElement, cell)

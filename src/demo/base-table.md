@@ -31,7 +31,7 @@ const createRows = () => {
             if (c === 0 || c === 1) {  
                 stickyCell = 'left'
             }
-            if (c === 2) {
+            if (c === 99) {
                 stickyCell = 'right'
             }
             cells.push({

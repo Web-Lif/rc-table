@@ -7,7 +7,9 @@ const RowStyled = styled.div`
     box-sizing: border-box;
     white-space: nowrap;
     &:hover {
-        background-color: var(--rc-table-row-hover-background-color, #f5f5f5);
+        /* > div {
+            background-color: var(--rc-table-row-hover-background-color, #f5f5f5);
+        } */
     }
 `
 
