@@ -11,8 +11,14 @@ export interface Cell {
     colSpan?: number;
     /** 内部使用属性 */
     left?: number;
+    /** 内部使用属性 */
+    top?: number;
     /** 单元格是否可以选中 */
     selectd?: boolean;
+    /** 单元格是否固定 */
+    sticky?:  'left' | 'topLeft';
+    /** 单元格的高度 */
+    height?: number;
     /** 单元格的类名 */
     className?: string;
     /** 所在的真实的索引 */

@@ -25,11 +25,17 @@ const createRows = () => {
             sticky = 'top';
             selectd = false;
         }
-        for (let c = 0; c < 1000; c += 1) {
+        for (let c = 0; c < 100; c += 1) {
+            let stickyCell
+            
+            if (c === 0) {  
+                stickyCell = 'left'
+            }
             cells.push({
                 width: 120,
                 value: `${i} - ${c}`,
                 key: `${i}-${c}`,
+                sticky: stickyCell,
                 selectd,
             });
         }

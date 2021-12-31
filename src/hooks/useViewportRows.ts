@@ -94,39 +94,58 @@ export const useViewportRows = ({
 
     let scrollHeightTop = 0
 
-
-
-    const getViewportCells = (row: Row) => {
+    const getViewportCells = (row: Row, callback?: (cell: Cell) => void) => {
         const resCell: Cell[] = []
         let cellEndRight = 0
         row.cells.forEach((cell, cellIndex) => {
             cellEndRight += cell.width
             const cellStartLeft = cellEndRight - cell.width
             let cellState = 'viewpor'
+            const newCell: Cell = {
+                ...cell,
+                top: row.top,
+                height: row.height,
+                left: cellStartLeft,
+            }
             if (cellStartLeft < scrollLeft + width) {
                 cellState = getCellState(cellStartLeft, cellEndRight, cellIndex > 0 ? row.cells[cellIndex - 1].width : row.cells[0].width)
             } else {
                 cellState = getCellState(cellStartLeft, cellEndRight, cellIndex < row.cells.length - 1 ? row.cells[cellIndex + 1].width : 0)
             }
             if (cellState === 'viewpor' || cellState === 'outlet') {
-                resCell.push({
-                    ...cell,
-                    left: cellStartLeft,
-                })
+              
+                resCell.push(newCell)
             }
+            callback?.(newCell)
         })
         return resCell
     }
 
+    // 固定单元格
+    const stickyCells: Cell[] = []
+
     rows.some((row, index) => {
         if (row.sticky) {
-            stickyRows.push({
+            const stickyRow = {
                 ...row,
-                cells: getViewportCells(row)
+                top: scrollHeightTop,
+            }
+
+            stickyRows.push({
+                ...stickyRow,
+                cells: getViewportCells(stickyRow, (current) => {
+                    if (current.sticky) {
+                        stickyCells.push({
+                            ...current,
+                            sticky: 'topLeft'
+                        }) 
+                    }
+                })
             })
         }
 
         scrollHeightTop += row.height
+      
         // 开始的 Y 坐标点
         const rowStartTop = scrollHeightTop - row.height
         // 结束的 Y 坐标点
@@ -146,10 +165,17 @@ export const useViewportRows = ({
         }
 
         if (rowState === 'viewpor' || rowState === 'outlet') {
-            resRows.push({
+            const newRow = {
                 ...row,
                 top: rowStartTop,
-                cells: getViewportCells(row),
+            }
+            resRows.push({
+                ...newRow,
+                cells: getViewportCells(newRow, (current) => {
+                    if (current.sticky) {
+                        stickyCells.push(current) 
+                    }
+                }),
             })
         }
         if (rowState === 'virtual-bottom') {
@@ -158,9 +184,11 @@ export const useViewportRows = ({
         return false
     })
 
+    console.log(stickyCells)
     return {
         rows: resRows,
         stickyRows,
+        stickyCells,
         scrollWidth,
         scrollHeight
     }

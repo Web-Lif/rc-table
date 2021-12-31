@@ -1,5 +1,5 @@
-import React, { cloneElement, CSSProperties, Key, ReactElement, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
+import React, { CSSProperties, Key, ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import styled from 'styled-components';
 import TableRow from './Row';
 import TableCell from './Cell';
 import { Cell, Row } from './types';
@@ -12,6 +12,7 @@ const TableStyle = styled.div`
     border-left: 1px solid var(--rc-table-border-color, #ddd);
     border-bottom: 1px solid var(--rc-table-border-color, #ddd);
     border-collapse: collapse;
+    position: relative;
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
     }
@@ -93,6 +94,7 @@ function Table({
         scrollWidth,
         rows: viewportRows,
         stickyRows: viewportStickyRows,
+        stickyCells: viewportStickyCells
     } = useViewportRows({
         rows,
         width,
@@ -115,6 +117,43 @@ function Table({
 
     const ticking = useRef<boolean>(false);
 
+
+    const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}) => {
+        const isSelect = cell.key === cellKey
+        return (
+            <TableCell
+                className={isSelect ? `rc-table-cell-select ${cell.className || ''}` : cell.className}
+                style={{
+                    width: cell.width,
+                    ...cssStyle,
+                }}
+                onClick={() => {
+                    if (cell.key && cell.selectd !== false) {
+                        setCellKey(cell.key)
+                    }
+                }}
+                aria-key={`${cell.key}-${cell.sticky || ''}`}
+                key={`${cell.key}-${cell.sticky || ''}`}
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                    const text = e.currentTarget.textContent
+                    // ctrl + c copy text
+                    if(e.ctrlKey && e.key === 'c' && text) {
+                        writeText(text)
+                        const element = e.currentTarget
+                        element.style.backgroundColor = '#fce4ec'
+                        setTimeout(() => {
+                            element.style.backgroundColor = 'inherit'
+                        }, 500)
+                    }
+                }}
+            >
+                {cell.value}
+            </TableCell>
+        )
+        
+    }
+
     const createRowElement = (row: Row, cssStyle: CSSProperties) => {
         let rowElement = (
             <TableRow
@@ -135,36 +174,7 @@ function Table({
                 }}
             >
                 {row.cells.map((cell) => {
-                    const isSelect = cell.key === cellKey
-                    const cellElement = (
-                        <TableCell
-                            className={isSelect ? `rc-table-cell-select ${cell.className || ''}` : cell.className}
-                            style={{
-                                width: cell.width,
-                            }}
-                            onClick={() => {
-                                if (cell.key && cell.selectd !== false) {
-                                    setCellKey(cell.key)
-                                }
-                            }}
-                            key={cell.key}
-                            tabIndex={-1}
-                            onKeyDown={(e) => {
-                                const text = e.currentTarget.textContent
-                                // ctrl + c copy text
-                                if(e.ctrlKey && e.key === 'c' && text) {
-                                    writeText(text)
-                                    const element = e.currentTarget
-                                    element.style.backgroundColor = '#fce4ec'
-                                    setTimeout(() => {
-                                        element.style.backgroundColor = 'inherit'
-                                    }, 500)
-                                }
-                            }}
-                        >
-                            {cell.value}
-                        </TableCell>
-                    )
+                    const cellElement = createCellElement(cell)
                     if (onCellRender) {
                         return onCellRender(cellElement, cell)
                     }
@@ -195,7 +205,6 @@ function Table({
             }
             return createRowElement(row, cssStyle)
         })
-
 
         return {
             contentRow,
@@ -246,6 +255,32 @@ function Table({
                 overflow: 'auto',
             }}
         >
+            <div
+                style={{
+                    position: 'absolute',
+                    marginLeft: scroll.left,
+                    marginTop: scrollRow?.top || 0,
+                    zIndex: 300,
+                }}
+            >
+                {viewportStickyCells.map(cell => {
+                    if (cell.sticky === 'topLeft') {
+                        return createCellElement(cell, {
+                            display: 'block',
+                            position: 'absolute',
+                            height: cell.height,
+                            top: scroll.top - (scrollRow?.top || 0) + (cell.top || 0),
+                            zIndex: 200
+                        })
+                    }
+                    return createCellElement(cell, {
+                        display: 'block',
+                        height: cell.height,
+                        top: cell.top,
+                        zIndex: 200
+                    })
+                })}
+            </div>
             {stickyRows}
             <div
                 style={{
