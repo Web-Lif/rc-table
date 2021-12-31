@@ -24,6 +24,12 @@ const TableWrapperStyle = styled.div`
     contain: style;
 `;
 
+const StickyLeftCellWrapper = styled.div`
+    position: absolute;
+    z-index: 300;
+    box-shadow: 2px 0 5px -2px hsl(0deg 0% 53% / 30%);
+`
+
 interface RowClickParam {
     event:  React.MouseEvent<HTMLDivElement, MouseEvent>
     row: Row
@@ -255,12 +261,11 @@ function Table({
                 overflow: 'auto',
             }}
         >
-            <div
+            <StickyLeftCellWrapper
                 style={{
-                    position: 'absolute',
+                    
                     marginLeft: scroll.left,
                     marginTop: scrollRow?.top || 0,
-                    zIndex: 300,
                 }}
             >
                 {viewportStickyRowLeft.map(row => {
@@ -276,7 +281,7 @@ function Table({
                         zIndex: 200
                     })
                 })}
-            </div>
+            </StickyLeftCellWrapper>
             {stickyRows}
             <div
                 style={{
