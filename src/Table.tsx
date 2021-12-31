@@ -14,6 +14,7 @@ const TableStyle = styled.div`
     border-bottom: 1px solid var(--rc-table-border-color, #ddd);
     border-collapse: collapse;
     position: relative;
+    box-sizing: border-box;
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
     }
@@ -23,18 +24,21 @@ const TableStyle = styled.div`
 const TableWrapperStyle = styled.div`
     width: 100%;
     contain: style;
+    box-sizing: border-box;
 `;
 
 const StickyLeftRowWrapper = styled.div`
     position: absolute;
     z-index: 11;
     box-shadow: 2px 0 5px -2px hsl(0deg 0% 53% / 30%);
+    box-sizing: border-box;
 `
 
 const StickyRightRowWrapper = styled.div`
     position: absolute;
     z-index: 11;
     box-shadow: -2px 0 5px -2px hsl(0deg 0% 53% / 30%);
+    box-sizing: border-box;
 `
 
 interface RowClickParam {
@@ -194,7 +198,16 @@ function Table({
             >
                 {row.cells.map((cell) => {
                     if (cell.sticky &&  key === undefined) {
-                        return <div style={{ width: cell.width }} key={`${rowKey}-padding-${cell.key}`}/>
+                        return (
+                            <div
+                                style={{
+                                    width: cell.width,
+                                    display: 'inline-block',
+                                    height: '100%'
+                                }}
+                                key={`${rowKey}-padding-${cell.key}`}
+                            />
+                        )
                     }
                     const cellElement = createCellElement(cell, {}, rowKey)
                     if (onCellRender) {
@@ -267,7 +280,7 @@ function Table({
     let viewportStickyRowRightWidth = 0
 
     viewportStickyRowRight?.[0]?.cells?.forEach(cell => {
-        viewportStickyRowRightWidth += cell.width
+        viewportStickyRowRightWidth += cell.width || 0
     })
 
     return (
@@ -302,7 +315,7 @@ function Table({
             </StickyLeftRowWrapper>
             <StickyRightRowWrapper
                 style={{
-                    marginLeft: (scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth(),
+                    marginLeft: (scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth() - 2,
                     marginTop: scrollRow?.top || 0,
                 }}
             >

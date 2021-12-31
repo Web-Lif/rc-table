@@ -25,13 +25,13 @@ const createRows = () => {
             sticky = 'top';
             selectd = false;
         }
-        for (let c = 0; c < 100; c += 1) {
+        for (let c = 0; c < 20; c += 1) {
             let stickyCell
             
             if (c === 0 || c === 1) {  
                 stickyCell = 'left'
             }
-            if (c === 99) {
+            if (c === 19 || c === 18) {
                 stickyCell = 'right'
             }
             cells.push({
