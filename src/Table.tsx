@@ -198,8 +198,6 @@ function Table({
     }
 
     const renderRow = () => {
-        let stickyTop = 0
-       
         const contentRow = viewportRows?.map((row) => {
             const cssStyle: CSSProperties = {
             };
@@ -207,23 +205,17 @@ function Table({
             if (row.key === rows[rows.length -1].key) {
                 cssStyle.borderBottom = 'initial'
             }
-            if (row.sticky) {
-                return null
-            }
             return createRowElement(row, cssStyle)
         })
-
         return {
             contentRow,
             stickyRows: viewportStickyRows.map(row => {
                 const cssStyle: CSSProperties = {
                     height: row.height,
-                    position: 'sticky',
-                    top: stickyTop,
-                    marginLeft: scrollRow?.cells?.[0]?.left,
+                    position: 'absolute',
+                    top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                     zIndex: 10,
                 };
-                stickyTop += row.height
                 return createRowElement(row, cssStyle)
             })
         }
@@ -263,7 +255,6 @@ function Table({
         >
             <StickyLeftCellWrapper
                 style={{
-                    
                     marginLeft: scroll.left,
                     marginTop: scrollRow?.top || 0,
                 }}
@@ -273,16 +264,14 @@ function Table({
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
-                            zIndex: 200
                         })
                     }
                     return createRowElement(row, {
                         height: row.height,
-                        zIndex: 200
                     })
                 })}
             </StickyLeftCellWrapper>
-            {stickyRows}
+           
             <div
                 style={{
                     height: scrollHeight,
@@ -297,6 +286,7 @@ function Table({
                         transform: getTransform(),
                     }}
                 >
+                    {stickyRows}
                     {contentRow}
                 </TableWrapperStyle>
             </div>
