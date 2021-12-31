@@ -94,7 +94,7 @@ function Table({
         scrollWidth,
         rows: viewportRows,
         stickyRows: viewportStickyRows,
-        stickyCells: viewportStickyCells
+        stickyRowLeft: viewportStickyRowLeft
     } = useViewportRows({
         rows,
         width,
@@ -132,7 +132,6 @@ function Table({
                         setCellKey(cell.key)
                     }
                 }}
-                aria-key={`${cell.key}-${cell.sticky || ''}`}
                 key={`${cell.key}-${cell.sticky || ''}`}
                 tabIndex={-1}
                 onKeyDown={(e) => {
@@ -158,8 +157,12 @@ function Table({
         let rowElement = (
             <TableRow
                 className={row.className}
-                style={cssStyle}
-                key={row.key}
+                style={{
+                    height: row.height,
+                    ['--rc-table-row-height' as any]: `${row.height}px`,
+                    ...cssStyle,
+                }}
+                key={`${row.key}-${row.sticky || ''}`}
                 onClick={(e) => {
                     onRowClick?.({
                         event: e,
@@ -193,8 +196,6 @@ function Table({
        
         const contentRow = viewportRows?.map((row) => {
             const cssStyle: CSSProperties = {
-                height: row.height,
-                ['--rc-table-row-height' as any]: `${row.height}px`,
             };
 
             if (row.key === rows[rows.length -1].key) {
@@ -211,7 +212,6 @@ function Table({
             stickyRows: viewportStickyRows.map(row => {
                 const cssStyle: CSSProperties = {
                     height: row.height,
-                    ['--rc-table-row-height' as any]: `${row.height}px`,
                     position: 'sticky',
                     top: stickyTop,
                     marginLeft: scrollRow?.cells?.[0]?.left,
@@ -263,20 +263,16 @@ function Table({
                     zIndex: 300,
                 }}
             >
-                {viewportStickyCells.map(cell => {
-                    if (cell.sticky === 'topLeft') {
-                        return createCellElement(cell, {
-                            display: 'block',
+                {viewportStickyRowLeft.map(row => {
+                    if (row.sticky === 'topLeft') {
+                        return createRowElement(row, {
                             position: 'absolute',
-                            height: cell.height,
-                            top: scroll.top - (scrollRow?.top || 0) + (cell.top || 0),
+                            top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                             zIndex: 200
                         })
                     }
-                    return createCellElement(cell, {
-                        display: 'block',
-                        height: cell.height,
-                        top: cell.top,
+                    return createRowElement(row, {
+                        height: row.height,
                         zIndex: 200
                     })
                 })}

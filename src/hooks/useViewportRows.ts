@@ -103,7 +103,6 @@ export const useViewportRows = ({
             let cellState = 'viewpor'
             const newCell: Cell = {
                 ...cell,
-                top: row.top,
                 height: row.height,
                 left: cellStartLeft,
             }
@@ -122,7 +121,7 @@ export const useViewportRows = ({
     }
 
     // 固定单元格
-    const stickyCells: Cell[] = []
+    const stickyRowLeft: Row[] = []
 
     rows.some((row, index) => {
         if (row.sticky) {
@@ -130,17 +129,21 @@ export const useViewportRows = ({
                 ...row,
                 top: scrollHeightTop,
             }
-
+            const stickyCells: Cell[] = []
             stickyRows.push({
                 ...stickyRow,
                 cells: getViewportCells(stickyRow, (current) => {
                     if (current.sticky) {
                         stickyCells.push({
                             ...current,
-                            sticky: 'topLeft'
                         }) 
                     }
                 })
+            })
+            stickyRowLeft.push({
+                ...stickyRow,
+                cells: stickyCells,
+                sticky: 'topLeft'
             })
         }
 
@@ -169,6 +172,8 @@ export const useViewportRows = ({
                 ...row,
                 top: rowStartTop,
             }
+
+            const stickyCells: Cell[] = []
             resRows.push({
                 ...newRow,
                 cells: getViewportCells(newRow, (current) => {
@@ -177,6 +182,11 @@ export const useViewportRows = ({
                     }
                 }),
             })
+
+            stickyRowLeft.push({
+                ...newRow,
+                cells: stickyCells
+            })
         }
         if (rowState === 'virtual-bottom') {
             return true
@@ -184,11 +194,11 @@ export const useViewportRows = ({
         return false
     })
 
-    console.log(stickyCells)
+    console.log(stickyRowLeft)
     return {
         rows: resRows,
         stickyRows,
-        stickyCells,
+        stickyRowLeft,
         scrollWidth,
         scrollHeight
     }
