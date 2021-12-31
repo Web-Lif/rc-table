@@ -194,7 +194,6 @@ export const useViewportRows = ({
         return false
     })
 
-    console.log(stickyRowLeft)
     return {
         rows: resRows,
         stickyRows,

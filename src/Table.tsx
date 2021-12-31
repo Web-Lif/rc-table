@@ -26,7 +26,7 @@ const TableWrapperStyle = styled.div`
 
 const StickyLeftCellWrapper = styled.div`
     position: absolute;
-    z-index: 300;
+    z-index: 11;
     box-shadow: 2px 0 5px -2px hsl(0deg 0% 53% / 30%);
 `
 
@@ -221,7 +221,7 @@ function Table({
                     position: 'sticky',
                     top: stickyTop,
                     marginLeft: scrollRow?.cells?.[0]?.left,
-                    zIndex: 200,
+                    zIndex: 10,
                 };
                 stickyTop += row.height
                 return createRowElement(row, cssStyle)
