@@ -151,13 +151,15 @@ function Table({
                 onKeyDown={(e) => {
                     const text = e.currentTarget.textContent
                     // ctrl + c copy text
-                    if(e.ctrlKey && e.key === 'c' && text) {
+                    if (e.ctrlKey && e.key === 'c' && text) {
                         writeText(text)
                         const element = e.currentTarget
                         element.style.backgroundColor = '#fce4ec'
                         setTimeout(() => {
                             element.style.backgroundColor = 'var(--rc-table-background-color, #fff)'
                         }, 500)
+                    } else if (e.key === 'Escape') {
+                        setCellKey(null)
                     }
                 }}
             >

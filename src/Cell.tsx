@@ -14,6 +14,7 @@ const CellStyled = styled.div`
     overflow: hidden;
     user-select: none;
     box-sizing: border-box;
+    outline: unset;
     background-color: var(--rc-table-background-color, #fff);
 `
 
