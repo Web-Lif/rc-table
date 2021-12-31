@@ -303,6 +303,7 @@ function Table({
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
+                            zIndex: 15,
                         }, 'StickyLeftRowWrapper')
                     }
                     if (row.sticky) {
@@ -324,6 +325,7 @@ function Table({
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
+                            zIndex: 15,
                         }, 'StickyRightRowWrapper')
                     }
                     if (row.sticky) {
