@@ -31,6 +31,9 @@ const createRows = () => {
             if (c === 0 || c === 1) {  
                 stickyCell = 'left'
             }
+            if (c === 2) {
+                stickyCell = 'right'
+            }
             cells.push({
                 width: 120,
                 value: `${i} - ${c}`,

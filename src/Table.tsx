@@ -30,6 +30,12 @@ const StickyLeftCellWrapper = styled.div`
     box-shadow: 2px 0 5px -2px hsl(0deg 0% 53% / 30%);
 `
 
+const StickyRightCellWrapper = styled.div`
+    position: absolute;
+    z-index: 11;
+    box-shadow: -2px 0 5px -2px hsl(0deg 0% 53% / 30%);
+`
+
 interface RowClickParam {
     event:  React.MouseEvent<HTMLDivElement, MouseEvent>
     row: Row
@@ -100,7 +106,8 @@ function Table({
         scrollWidth,
         rows: viewportRows,
         stickyRows: viewportStickyRows,
-        stickyRowLeft: viewportStickyRowLeft
+        stickyRowLeft: viewportStickyRowLeft,
+        stickyRowRight: viewportStickyRowRight
     } = useViewportRows({
         rows,
         width,
@@ -205,6 +212,11 @@ function Table({
             if (row.key === rows[rows.length -1].key) {
                 cssStyle.borderBottom = 'initial'
             }
+
+            if (row.sticky) {
+                return <div style={{ height: row.height }} />
+            }
+
             return createRowElement(row, cssStyle)
         })
         return {
@@ -244,6 +256,14 @@ function Table({
             }
         }, { passive: true})
     }, [])
+
+
+    let viewportStickyRowRightWidth = 0
+
+    viewportStickyRowRight?.[0]?.cells?.forEach(cell => {
+        viewportStickyRowRightWidth += cell.width
+    })
+
     return (
         <TableStyle
             ref={tableRef}
@@ -266,12 +286,35 @@ function Table({
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                         })
                     }
+                    if (row.sticky) {
+                        return <div style={{ height: row.height }}/>
+                    }
                     return createRowElement(row, {
                         height: row.height,
                     })
                 })}
             </StickyLeftCellWrapper>
-           
+            <StickyRightCellWrapper
+                style={{
+                    marginLeft: (scroll.left + width) - viewportStickyRowRightWidth,
+                    marginTop: scrollRow?.top || 0,
+                }}
+            >
+                {viewportStickyRowRight.map(row => {
+                    if (row.sticky === 'topRight') {
+                        return createRowElement(row, {
+                            position: 'absolute',
+                            top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
+                        })
+                    }
+                    if (row.sticky) {
+                        return <div style={{ height: row.height }}/>
+                    }
+                    return createRowElement(row, {
+                        height: row.height,
+                    })
+                })}
+            </StickyRightCellWrapper>
             <div
                 style={{
                     height: scrollHeight,

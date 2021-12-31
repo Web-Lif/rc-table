@@ -14,7 +14,7 @@ export interface Cell {
     /** 单元格是否可以选中 */
     selectd?: boolean;
     /** 单元格是否固定 */
-    sticky?:  'left' ;
+    sticky?:  'left' | 'right' ;
     /** 单元格的高度 */
     height?: number;
     /** 单元格的类名 */
@@ -31,7 +31,7 @@ export interface Row {
     /** 内部使用属性 */
     top?: number;
     /** 是否固定行 */
-    sticky?: 'top' | 'topLeft';
+    sticky?: 'top' | 'topLeft' | 'topRight';
     /** 行的的类名 */
     className?: string;
     /** 所在的真实的索引 */

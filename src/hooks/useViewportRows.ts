@@ -122,6 +122,7 @@ export const useViewportRows = ({
 
     // 固定单元格
     const stickyRowLeft: Row[] = []
+    const stickyRowRight: Row[] = []
 
     rows.some((row, index) => {
         if (row.sticky) {
@@ -129,22 +130,42 @@ export const useViewportRows = ({
                 ...row,
                 top: scrollHeightTop,
             }
-            const stickyCells: Cell[] = []
+            const stickyLeftCells: Cell[] = []
+            const stickyRightCells: Cell[] = []
+            let stickyDirection: 'left' | 'right' | undefined = undefined;
             stickyRows.push({
                 ...stickyRow,
                 cells: getViewportCells(stickyRow, (current) => {
                     if (current.sticky) {
-                        stickyCells.push({
-                            ...current,
-                        }) 
+                        stickyDirection = current.sticky
+                        if (current.sticky === 'left') {
+                            stickyLeftCells.push({
+                                ...current,
+                            }) 
+                        } else if (current.sticky === 'right') {
+                            stickyRightCells.push({
+                                ...current
+                            })
+                        }
                     }
                 })
             })
-            stickyRowLeft.push({
-                ...stickyRow,
-                cells: stickyCells,
-                sticky: 'topLeft'
-            })
+
+
+            if (stickyLeftCells.length > 0) {
+                stickyRowLeft.push({
+                    ...stickyRow,
+                    cells: stickyLeftCells,
+                    sticky: 'topLeft'
+                })
+            }
+            if (stickyRightCells.length > 0) {
+                stickyRowRight.push({
+                    ...stickyRow,
+                    cells: stickyRightCells,
+                    sticky: 'topRight'
+                })
+            }
         }
 
         scrollHeightTop += row.height
@@ -173,20 +194,37 @@ export const useViewportRows = ({
                 top: rowStartTop,
             }
 
-            const stickyCells: Cell[] = []
+            const stickyLeftCells: Cell[] = []
+            const stickyRightCells: Cell[] = []
             resRows.push({
                 ...newRow,
                 cells: getViewportCells(newRow, (current) => {
                     if (current.sticky) {
-                        stickyCells.push(current) 
+                        if (current.sticky === 'left') {
+                            stickyLeftCells.push({
+                                ...current,
+                            }) 
+                        } else if (current.sticky === 'right') {
+                            stickyRightCells.push({
+                                ...current
+                            })
+                        }
                     }
                 }),
             })
 
-            stickyRowLeft.push({
-                ...newRow,
-                cells: stickyCells
-            })
+            if (stickyLeftCells.length > 0) {
+                stickyRowLeft.push({
+                    ...newRow,
+                    cells: stickyLeftCells
+                })
+            }
+            if (stickyRightCells.length > 0) {
+                stickyRowRight.push({
+                    ...newRow,
+                    cells: stickyRightCells
+                })
+            }
         }
         if (rowState === 'virtual-bottom') {
             return true
@@ -198,6 +236,7 @@ export const useViewportRows = ({
         rows: resRows,
         stickyRows,
         stickyRowLeft,
+        stickyRowRight,
         scrollWidth,
         scrollHeight
     }
