@@ -28,7 +28,7 @@ const createRows = () => {
         for (let c = 0; c < 20; c += 1) {
             let stickyCell
             
-            if (c === 0 || c === 1) {  
+            if (c === 0) {  
                 stickyCell = 'left'
             }
             if (c === 19 || c === 18) {

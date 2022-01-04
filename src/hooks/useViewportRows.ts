@@ -107,9 +107,9 @@ export const useViewportRows = ({
                 left: cellStartLeft,
             }
             if (cellStartLeft < scrollLeft + width) {
-                cellState = getCellState(cellStartLeft, cellEndRight, cellIndex > 0 ? row.cells[cellIndex - 1].width : row.cells[0].width)
+                cellState = getCellState(cellStartLeft, cellEndRight, cellIndex > 0 ? row.cells[cellIndex - 1].width + 120 : row.cells[0].width)
             } else {
-                cellState = getCellState(cellStartLeft, cellEndRight, cellIndex < row.cells.length - 1 ? row.cells[cellIndex + 1].width : 0)
+                cellState = getCellState(cellStartLeft, cellEndRight, cellIndex < row.cells.length - 1 ? row.cells[cellIndex + 1].width + 120 : 0)
             }
             if (cellState === 'viewpor' || cellState === 'outlet') {
               
