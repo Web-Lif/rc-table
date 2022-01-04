@@ -23,7 +23,7 @@ export interface Cell {
     key?: Key
 }
 
-export interface Row {
+export interface Row<T> {
     /** 表格的高度 */
     height: number;
     /** 表格的单元格信息 */
@@ -36,4 +36,6 @@ export interface Row {
     className?: string;
     /** 所在的真实的索引 */
     key?: Key
+    /** 绑定的额外数据 */
+    object?: T;
 }

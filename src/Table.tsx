@@ -41,12 +41,12 @@ const StickyRightRowWrapper = styled.div`
     box-sizing: border-box;
 `
 
-interface RowClickParam {
+interface RowClickParam<T> {
     event:  React.MouseEvent<HTMLDivElement, MouseEvent>
-    row: Row
+    row: Row<T>
 }
 
-interface TableProps {
+interface TableProps<T> {
 
     /** 宽度 */
     width: number;
@@ -55,7 +55,7 @@ interface TableProps {
     height: number;
 
     /** 当前的行信息 */
-    rows: Row[];
+    rows: Row<T>[];
 
     /** 调试模式 */
     debug?: boolean
@@ -64,16 +64,16 @@ interface TableProps {
     onCellRender?: (element: ReactElement,cells: Cell) => ReactElement
 
     /** 渲染行触发的事件 */
-    onRowRender?: (element: ReactElement, row: Row) => ReactElement
+    onRowRender?: (element: ReactElement, row: Row<T>) => ReactElement
 
     /** 表格单击行触发的事件 */
-    onRowClick?: (param: RowClickParam) => void
+    onRowClick?: (param: RowClickParam<T>) => void
 
     /** 表格双击行触发的事件 */
-    onRowDoubleClick?: (param: RowClickParam) => void
+    onRowDoubleClick?: (param: RowClickParam<T>) => void
 }
 
-function Table({
+function Table<T>({
     width,
     height,
     rows,
@@ -82,7 +82,7 @@ function Table({
     onRowRender,
     onRowClick,
     onRowDoubleClick
-}: TableProps) {
+}: TableProps<T>) {
 
     const logTime = (label: string) => {
         if (debug) {
@@ -113,7 +113,7 @@ function Table({
         stickyRows: viewportStickyRows,
         stickyRowLeft: viewportStickyRowLeft,
         stickyRowRight: viewportStickyRowRight
-    } = useViewportRows({
+    } = useViewportRows<T>({
         rows,
         width,
         height,
@@ -172,7 +172,7 @@ function Table({
         )
     }
 
-    const createRowElement = (row: Row, cssStyle: CSSProperties, key?: Key) => {
+    const createRowElement = (row: Row<T>, cssStyle: CSSProperties, key?: Key) => {
         const rowKey = `${row.key}-${row.sticky || ''}-${key || ''}`
         let rowElement = (
             <TableRow

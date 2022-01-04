@@ -9,8 +9,8 @@ interface CellPatch {
     left: number
     top: number
 }
-interface ViewportRowsArgs {
-    rows: Row[]
+interface ViewportRowsArgs<T> {
+    rows: Row<T>[]
     scrollTop: number
     scrollLeft: number
     width: number
@@ -18,13 +18,13 @@ interface ViewportRowsArgs {
 }
 
 
-export const useViewportRows = ({
+export function useViewportRows<T>({
     rows,
     height,
     width,
     scrollTop,
     scrollLeft,
-}: ViewportRowsArgs) => {
+}: ViewportRowsArgs<T>) {
 
     const cacheScrollHeight = useRef<number>(-1)
 
@@ -88,13 +88,13 @@ export const useViewportRows = ({
         return scrollHeightTemp
     }, [rows])
 
-    const resRows: Row[] = []
+    const resRows: Row<T>[] = []
 
-    const stickyRows: Row[] = []
+    const stickyRows: Row<T>[] = []
 
     let scrollHeightTop = 0
 
-    const getViewportCells = (row: Row, callback?: (cell: Cell) => void) => {
+    const getViewportCells = (row: Row<T>, callback?: (cell: Cell) => void) => {
         const resCell: Cell[] = []
         let cellEndRight = 0
         row.cells.forEach((cell, cellIndex) => {
@@ -121,8 +121,8 @@ export const useViewportRows = ({
     }
 
     // 固定单元格
-    const stickyRowLeft: Row[] = []
-    const stickyRowRight: Row[] = []
+    const stickyRowLeft: Row<T>[] = []
+    const stickyRowRight: Row<T>[] = []
 
     rows.some((row, index) => {
         if (row.sticky) {
