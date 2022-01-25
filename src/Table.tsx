@@ -273,7 +273,7 @@ function Table<T>({
                 });
                 ticking.current = true;
             }
-        }, { passive: true})
+        }, { passive: true })
     }, [])
 
 
@@ -294,8 +294,7 @@ function Table<T>({
         >
             <StickyLeftRowWrapper
                 style={{
-                    marginLeft: scroll.left,
-                    marginTop: scrollRow?.top || 0,
+                    transform: `translate3d(${scroll.left || 0}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
                 {viewportStickyRowLeft.map(row => {
@@ -316,8 +315,7 @@ function Table<T>({
             </StickyLeftRowWrapper>
             <StickyRightRowWrapper
                 style={{
-                    marginLeft: (scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth() - 2,
-                    marginTop: scrollRow?.top || 0,
+                    transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth() - 2}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
                 {viewportStickyRowRight.map(row => {
