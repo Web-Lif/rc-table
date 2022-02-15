@@ -30,7 +30,7 @@ export function useViewportRows<T>({
 
     useMemo(() => {
         cacheScrollHeight.current = -1
-    }, [rows])
+    }, [rows.length])
 
     const getRowState = (
         rowStartTop: number,
@@ -86,7 +86,7 @@ export function useViewportRows<T>({
             scrollHeightTemp += row.height
         })
         return scrollHeightTemp
-    }, [rows])
+    }, [rows.length])
 
     const resRows: Row<T>[] = []
 
