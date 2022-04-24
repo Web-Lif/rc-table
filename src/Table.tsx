@@ -18,13 +18,14 @@ const TableStyle = styled.div`
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
     }
-    
+
 `;
 
 const TableWrapperStyle = styled.div`
     width: 100%;
     contain: style;
     box-sizing: border-box;
+    will-change: transform;
 `;
 
 const StickyLeftRowWrapper = styled.div`
@@ -124,11 +125,12 @@ function Table<T>({
 
 
     const scrollRow = viewportRows?.[0]
+
+    const translateY = scrollRow?.top || 0
+    const translateX = scrollRow?.cells?.[0]?.left || 0
+
     const getTransform = () => {
-        if (tableRef.current) {
-            return `translate3d(${scrollRow?.cells?.[0]?.left || 0}px,${scrollRow?.top || 0}px, 0px)`;
-        }
-        return undefined;
+        return `translate3d(${translateX}px,${translateY}px, 0px)`;
     };
 
     const [cellKey, setCellKey] = useState<Key | null>(null)
@@ -223,6 +225,8 @@ function Table<T>({
         return rowElement
     }
 
+    let stickyTopHeight = 0;
+
     const renderRow = () => {
         const contentRow = viewportRows?.map((row) => {
             const cssStyle: CSSProperties = {
@@ -233,7 +237,7 @@ function Table<T>({
             }
 
             if (row.sticky) {
-                return <div key={`${row.key}-padding`} style={{ height: row.height }} />
+                return null
             }
 
             return createRowElement(row, cssStyle)
@@ -241,16 +245,15 @@ function Table<T>({
         return {
             contentRow,
             stickyRows: viewportStickyRows.map(row => {
+                stickyTopHeight += row.top || 0
                 const cssStyle: CSSProperties = {
                     height: row.height,
-                    position: 'absolute',
-                    top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
-                    zIndex: 10,
                 };
                 return createRowElement(row, cssStyle)
             })
         }
     }
+
 
     logTime('renderRow')
     const { contentRow, stickyRows} = useMemo(() => {
@@ -334,9 +337,19 @@ function Table<T>({
                     }, 'StickyLeftRowWrapper')
                 })}
             </StickyRightRowWrapper>
+            <TableWrapperStyle
+                style={{
+                    position: 'sticky',
+                    top: 0,
+                    transform: `translate3d(${translateX}px, 0px, 0px)`,
+                    zIndex: 10
+                }}
+            >
+                {stickyRows}
+            </TableWrapperStyle>
             <div
                 style={{
-                    height: scrollHeight,
+                    height: scrollHeight - stickyTopHeight,
                     width: scrollWidth,
                     minHeight: height,
                     position: 'relative',
@@ -348,7 +361,6 @@ function Table<T>({
                         transform: getTransform(),
                     }}
                 >
-                    {stickyRows}
                     {contentRow}
                 </TableWrapperStyle>
             </div>

@@ -9,6 +9,8 @@ interface CellPatch {
     left: number
     top: number
 }
+
+
 interface ViewportRowsArgs<T> {
     rows: Row<T>[]
     scrollTop: number
@@ -38,8 +40,8 @@ export function useViewportRows<T>({
         outletHeight: number
     ) : 'outlet' | 'viewpor' | 'virtual-top' | 'virtual-bottom'  =>{
         if (
-            (scrollTop - rowStartTop > outletHeight) 
-           
+            (scrollTop - rowStartTop > outletHeight)
+
         ) {
             return 'virtual-top'
         }
@@ -112,7 +114,7 @@ export function useViewportRows<T>({
                 cellState = getCellState(cellStartLeft, cellEndRight, cellIndex < row.cells.length - 1 ? row.cells[cellIndex + 1].width + 120 : 0)
             }
             if (cellState === 'viewpor' || cellState === 'outlet') {
-              
+
                 resCell.push(newCell)
             }
             callback?.(newCell)
@@ -141,7 +143,7 @@ export function useViewportRows<T>({
                         if (current.sticky === 'left') {
                             stickyLeftCells.push({
                                 ...current,
-                            }) 
+                            })
                         } else if (current.sticky === 'right') {
                             stickyRightCells.push({
                                 ...current
@@ -169,7 +171,7 @@ export function useViewportRows<T>({
         }
 
         scrollHeightTop += row.height
-      
+
         // 开始的 Y 坐标点
         const rowStartTop = scrollHeightTop - row.height
         // 结束的 Y 坐标点
@@ -203,7 +205,7 @@ export function useViewportRows<T>({
                         if (current.sticky === 'left') {
                             stickyLeftCells.push({
                                 ...current,
-                            }) 
+                            })
                         } else if (current.sticky === 'right') {
                             stickyRightCells.push({
                                 ...current
