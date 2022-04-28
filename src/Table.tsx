@@ -129,9 +129,7 @@ function Table<T>({
     const translateY = scrollRow?.top || 0
     const translateX = scrollRow?.cells?.[0]?.left || 0
 
-    const getTransform = () => {
-        return `translate3d(${translateX}px,${translateY}px, 0px)`;
-    };
+
 
     const [cellKey, setCellKey] = useState<Key | null>(null)
 
@@ -225,7 +223,10 @@ function Table<T>({
         return rowElement
     }
 
-    let stickyTopHeight = 0;
+    const getTransform = () => {
+        return `translate3d(${translateX}px,${translateY}px, 0px)`;
+    };
+
 
     const renderRow = () => {
         const contentRow = viewportRows?.map((row) => {
@@ -237,7 +238,7 @@ function Table<T>({
             }
 
             if (row.sticky) {
-                return null
+                return <div key={`${row.key}-padding`} style={{ height: row.height }} />
             }
 
             return createRowElement(row, cssStyle)
@@ -245,7 +246,6 @@ function Table<T>({
         return {
             contentRow,
             stickyRows: viewportStickyRows.map(row => {
-                stickyTopHeight += row.top || 0
                 const cssStyle: CSSProperties = {
                     height: row.height,
                 };
@@ -337,22 +337,13 @@ function Table<T>({
                     }, 'StickyLeftRowWrapper')
                 })}
             </StickyRightRowWrapper>
-            <TableWrapperStyle
-                style={{
-                    position: 'sticky',
-                    top: 0,
-                    transform: `translate3d(${translateX}px, 0px, 0px)`,
-                    zIndex: 10
-                }}
-            >
-                {stickyRows}
-            </TableWrapperStyle>
+
             <div
                 style={{
-                    height: scrollHeight - stickyTopHeight,
+                    height: scrollHeight,
                     width: scrollWidth,
                     minHeight: height,
-                    position: 'relative',
+                    position: 'absolute',
                     overflow: 'hidden',
                 }}
             >
@@ -364,6 +355,16 @@ function Table<T>({
                     {contentRow}
                 </TableWrapperStyle>
             </div>
+            <TableWrapperStyle
+                style={{
+                    position: 'sticky',
+                    transform: `translate3d(${translateX}px, 0px, 0px)`,
+                    top: 0,
+                    zIndex: 10
+                }}
+            >
+                {stickyRows}
+            </TableWrapperStyle>
         </TableStyle>
     );
 }

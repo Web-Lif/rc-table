@@ -15,7 +15,7 @@ import { Table } from '@weblif/rc-table';
 
 const createRows = () => {
     const rows: Row[] = [];
-    for (let i = 0; i < 2000; i += 1) {
+    for (let i = 0; i < 20; i += 1) {
         const cells = [];
 
         let sticky;
