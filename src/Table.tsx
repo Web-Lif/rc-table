@@ -172,11 +172,11 @@ function Table<T>({
         )
     }
 
-    const createRowElement = (row: Row<T>, cssStyle: CSSProperties, key?: Key) => {
+    const createRowElement = (row: Row<T>, cssStyle: CSSProperties, index: number, key?: Key) => {
         const rowKey = `${row.key}-${row.sticky || ''}-${key || ''}`
         let rowElement = (
             <TableRow
-                className={row.className}
+                className={`${row.className || ''} rc-table-row-index-${index}`}
                 style={{
                     height: row.height,
                     ['--rc-table-row-height' as any]: `${row.height}px`,
@@ -229,7 +229,7 @@ function Table<T>({
 
 
     const renderRow = () => {
-        const contentRow = viewportRows?.map((row) => {
+        const contentRow = viewportRows?.map((row, index) => {
             const cssStyle: CSSProperties = {
             };
 
@@ -241,15 +241,15 @@ function Table<T>({
                 return <div key={`${row.key}-padding`} style={{ height: row.height }} />
             }
 
-            return createRowElement(row, cssStyle)
+            return createRowElement(row, cssStyle, index)
         })
         return {
             contentRow,
-            stickyRows: viewportStickyRows.map(row => {
+            stickyRows: viewportStickyRows.map((row, index) => {
                 const cssStyle: CSSProperties = {
                     height: row.height,
                 };
-                return createRowElement(row, cssStyle)
+                return createRowElement(row, cssStyle, index)
             })
         }
     }
@@ -300,20 +300,20 @@ function Table<T>({
                     transform: `translate3d(${scroll.left || 0}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
-                {viewportStickyRowLeft.map(row => {
+                {viewportStickyRowLeft.map((row, index) => {
                     if (row.sticky === 'topLeft') {
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                             zIndex: 15,
-                        }, 'StickyLeftRowWrapper')
+                        }, index,'StickyLeftRowWrapper')
                     }
                     if (row.sticky) {
                         return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
-                    }, 'StickyLeftRowWrapper')
+                    }, index, 'StickyLeftRowWrapper')
                 })}
             </StickyLeftRowWrapper>
             <StickyRightRowWrapper
@@ -321,20 +321,20 @@ function Table<T>({
                     transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth() - 2}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
-                {viewportStickyRowRight.map(row => {
+                {viewportStickyRowRight.map((row, index) => {
                     if (row.sticky === 'topRight') {
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                             zIndex: 15,
-                        }, 'StickyRightRowWrapper')
+                        }, index, 'StickyRightRowWrapper')
                     }
                     if (row.sticky) {
                         return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
-                    }, 'StickyLeftRowWrapper')
+                    }, index, 'StickyLeftRowWrapper')
                 })}
             </StickyRightRowWrapper>
 
