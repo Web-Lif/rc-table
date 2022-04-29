@@ -74,10 +74,10 @@ interface TableProps<T> {
     onRowDoubleClick?: (param: RowClickParam<T>) => void
 
     /** 鼠标移动到行触发的事件 */
-    onRowMouseOver?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
+    onRowMouseEnter?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
 
     /** 鼠标移出到行触发的事件 */
-    onRowMouseOut?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
+    onRowMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
 }
 
 function Table<T>({
@@ -89,8 +89,8 @@ function Table<T>({
     onRowRender,
     onRowClick,
     onRowDoubleClick,
-    onRowMouseOver,
-    onRowMouseOut
+    onRowMouseEnter,
+    onRowMouseLeave
 }: TableProps<T>) {
 
     const logTime = (label: string) => {
@@ -197,11 +197,11 @@ function Table<T>({
                         row,
                     })
                 }}
-                onMouseOver={(e) => {
-                    onRowMouseOver?.(e, tableRef.current!);
+                onMouseEnter={(e) => {
+                    onRowMouseEnter?.(e, tableRef.current!);
                 }}
-                onMouseOut={(e) => {
-                    onRowMouseOut?.(e, tableRef.current!)
+                onMouseLeave={(e) => {
+                    onRowMouseLeave?.(e, tableRef.current!)
                 }}
 
                 onDoubleClick={(e) => {
