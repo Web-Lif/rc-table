@@ -75,6 +75,9 @@ interface TableProps<T> {
 
     /** 鼠标移动到行触发的事件 */
     onRowMouseOver?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
+
+    /** 鼠标移出到行触发的事件 */
+    onRowMouseOut?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
 }
 
 function Table<T>({
@@ -86,7 +89,8 @@ function Table<T>({
     onRowRender,
     onRowClick,
     onRowDoubleClick,
-    onRowMouseOver
+    onRowMouseOver,
+    onRowMouseOut
 }: TableProps<T>) {
 
     const logTime = (label: string) => {
@@ -176,11 +180,11 @@ function Table<T>({
         )
     }
 
-    const createRowElement = (row: Row<T>, cssStyle: CSSProperties, index: number, key?: Key) => {
+    const createRowElement = (row: Row<T>, cssStyle: CSSProperties, key?: Key) => {
         const rowKey = `${row.key}-${row.sticky || ''}-${key || ''}`
         let rowElement = (
             <TableRow
-                className={`${row.className || ''} rc-table-row-index-${index}`}
+                className={`${row.className || ''} rc-table-row rc-table-row-${row.key}`}
                 style={{
                     height: row.height,
                     ['--rc-table-row-height' as any]: `${row.height}px`,
@@ -196,6 +200,10 @@ function Table<T>({
                 onMouseOver={(e) => {
                     onRowMouseOver?.(e, tableRef.current!);
                 }}
+                onMouseOut={(e) => {
+                    onRowMouseOut?.(e, tableRef.current!)
+                }}
+
                 onDoubleClick={(e) => {
                     onRowDoubleClick?.({
                         event: e,
@@ -236,7 +244,7 @@ function Table<T>({
 
 
     const renderRow = () => {
-        const contentRow = viewportRows?.map((row, index) => {
+        const contentRow = viewportRows?.map((row) => {
             const cssStyle: CSSProperties = {
             };
 
@@ -248,7 +256,7 @@ function Table<T>({
                 return <div key={`${row.key}-padding`} style={{ height: row.height }} />
             }
 
-            return createRowElement(row, cssStyle, index)
+            return createRowElement(row, cssStyle)
         })
         return {
             contentRow,
@@ -256,7 +264,7 @@ function Table<T>({
                 const cssStyle: CSSProperties = {
                     height: row.height,
                 };
-                return createRowElement(row, cssStyle, index)
+                return createRowElement(row, cssStyle)
             })
         }
     }
@@ -293,6 +301,7 @@ function Table<T>({
         viewportStickyRowRightWidth += cell.width || 0
     })
 
+
     return (
         <TableStyle
             ref={tableRef}
@@ -307,20 +316,20 @@ function Table<T>({
                     transform: `translate3d(${scroll.left || 0}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
-                {viewportStickyRowLeft.map((row, index) => {
+                {viewportStickyRowLeft.map((row) => {
                     if (row.sticky === 'topLeft') {
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                             zIndex: 15,
-                        }, index,'StickyLeftRowWrapper')
+                        },'StickyLeftRowWrapper')
                     }
                     if (row.sticky) {
                         return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
-                    }, index, 'StickyLeftRowWrapper')
+                    }, 'StickyLeftRowWrapper')
                 })}
             </StickyLeftRowWrapper>
             <StickyRightRowWrapper
@@ -328,20 +337,20 @@ function Table<T>({
                     transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth() - 2}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
-                {viewportStickyRowRight.map((row, index) => {
+                {viewportStickyRowRight.map((row) => {
                     if (row.sticky === 'topRight') {
                         return createRowElement(row, {
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                             zIndex: 15,
-                        }, index, 'StickyRightRowWrapper')
+                        }, 'StickyRightRowWrapper')
                     }
                     if (row.sticky) {
                         return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
                     }
                     return createRowElement(row, {
                         height: row.height,
-                    }, index, 'StickyLeftRowWrapper')
+                    }, 'StickyLeftRowWrapper')
                 })}
             </StickyRightRowWrapper>
 

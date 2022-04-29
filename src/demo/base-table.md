@@ -26,13 +26,13 @@ const createRows = () => {
             selectd = false;
         }
         for (let c = 0; c < 20; c += 1) {
-            let stickyCell
-            
-            if (c === 0) {  
-                stickyCell = 'left'
+            let stickyCell;
+
+            if (c === 0) {
+                stickyCell = 'left';
             }
             if (c === 19 || c === 18) {
-                stickyCell = 'right'
+                stickyCell = 'right';
             }
             cells.push({
                 width: 120,
@@ -47,7 +47,7 @@ const createRows = () => {
             height: 35,
             cells,
             key: i,
-            sticky
+            sticky,
         });
     }
     return rows;
@@ -56,7 +56,31 @@ const createRows = () => {
 let rows = createRows();
 
 const BaseTable = () => {
-    return <Table width={1200} debug height={600} rows={rows} />;
+    return (
+        <Table
+            width={1200}
+            debug
+            height={600}
+            rows={rows}
+            onRowMouseOver={(e, table) => {
+                const classNames = e.currentTarget.className.split(' ');
+                const className = classNames.find((className) =>
+                    className.includes('rc-table-row-'),
+                );
+                const elements = table.querySelectorAll(`.${className}`);
+                table.querySelectorAll(`.rc-table-row`).forEach((element) => {
+                    (element as HTMLElement).style.removeProperty('--rc-table-background-color');
+                });
+
+                elements.forEach((element) => {
+                    (element as HTMLElement).style.setProperty(
+                        '--rc-table-background-color',
+                        '#f5f5f5',
+                    );
+                });
+            }}
+        />
+    );
 };
 
 export default BaseTable;
