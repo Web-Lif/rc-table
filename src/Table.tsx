@@ -72,6 +72,9 @@ interface TableProps<T> {
 
     /** 表格双击行触发的事件 */
     onRowDoubleClick?: (param: RowClickParam<T>) => void
+
+    /** 鼠标移动到行触发的事件 */
+    onRowMouseOver?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
 }
 
 function Table<T>({
@@ -82,7 +85,8 @@ function Table<T>({
     onCellRender,
     onRowRender,
     onRowClick,
-    onRowDoubleClick
+    onRowDoubleClick,
+    onRowMouseOver
 }: TableProps<T>) {
 
     const logTime = (label: string) => {
@@ -188,6 +192,9 @@ function Table<T>({
                         event: e,
                         row,
                     })
+                }}
+                onMouseOver={(e) => {
+                    onRowMouseOver?.(e, tableRef.current!);
                 }}
                 onDoubleClick={(e) => {
                     onRowDoubleClick?.({
