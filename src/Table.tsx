@@ -68,7 +68,7 @@ export interface TableProps<T> {
     debug?: boolean
 
     /** 表格的实例 */
-    table?: React.MutableRefObject<TableInstance>
+    table?: React.MutableRefObject<TableInstance | null>
 
     /** 渲染单元格的事件 */
     onCellRender?: (element: ReactElement,cells: Cell) => ReactElement
