@@ -48,7 +48,14 @@ interface RowClickParam<T> {
     row: Row<T>
 }
 
+
+export interface TableInstance {
+    /** 获取表格的滚动条的宽度 */
+    getScrollbarWidthOffset: () => number
+}
 interface TableProps<T> {
+
+    table: React.MutableRefObject<TableInstance>
 
     /** 宽度 */
     width: number;
@@ -86,6 +93,7 @@ function Table<T>({
     height,
     rows,
     debug,
+    table,
     onCellRender,
     onRowRender,
     onRowClick,
@@ -132,13 +140,10 @@ function Table<T>({
     });
     logTimeEnd('useViewportRows')
 
-
     const scrollRow = viewportRows?.[0]
 
     const translateY = scrollRow?.top || 0
     const translateX = scrollRow?.cells?.[0]?.left || 0
-
-
 
     const [cellKey, setCellKey] = useState<Key | null>(null)
 
@@ -151,6 +156,12 @@ function Table<T>({
 
         return getScrollbarWidth()
     }
+
+    useEffect(() => {
+        table.current = {
+            getScrollbarWidthOffset
+        }
+    })
 
     const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}, key?: Key) => {
         const isSelect = cell.key === cellKey
