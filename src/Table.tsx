@@ -14,6 +14,7 @@ const TableStyle = styled.div`
     border-bottom: 1px solid var(--rc-table-border-color, #ddd);
     border-collapse: collapse;
     position: relative;
+    overflow: auto;
     box-sizing: border-box;
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
@@ -143,6 +144,13 @@ function Table<T>({
 
     const ticking = useRef<boolean>(false);
 
+    const getScrollbarWidthOffset = () => {
+        if (scrollHeight <= height) {
+            return 0
+        }
+
+        return getScrollbarWidth()
+    }
 
     const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}, key?: Key) => {
         const isSelect = cell.key === cellKey
@@ -308,7 +316,7 @@ function Table<T>({
             style={{
                 width,
                 height,
-                overflow: 'auto',
+                overflow: 'auto'
             }}
         >
             <StickyLeftRowWrapper
@@ -334,7 +342,7 @@ function Table<T>({
             </StickyLeftRowWrapper>
             <StickyRightRowWrapper
                 style={{
-                    transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidth() - 2}px,${scrollRow?.top || 0}px, 0px)`
+                    transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidthOffset() - 2}px,${scrollRow?.top || 0}px, 0px)`
                 }}
             >
                 {viewportStickyRowRight.map((row) => {
@@ -358,7 +366,7 @@ function Table<T>({
                 style={{
                     height: scrollHeight,
                     width: scrollWidth,
-                    minHeight: height,
+                    minHeight: scrollHeight,
                     position: 'absolute',
                     overflow: 'hidden',
                 }}
