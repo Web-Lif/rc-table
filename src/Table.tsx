@@ -158,13 +158,11 @@ function Table<T>({
         return getScrollbarWidth()
     }
 
-    useEffect(() => {
-        if (table) {
-            table.current = {
-                getScrollbarWidthOffset
-            }
+    if (table) {
+        table.current = {
+            getScrollbarWidthOffset
         }
-    })
+    }
 
     const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}, key?: Key) => {
         const isSelect = cell.key === cellKey
