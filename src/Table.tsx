@@ -55,8 +55,6 @@ export interface TableInstance {
 }
 interface TableProps<T> {
 
-    table: React.MutableRefObject<TableInstance>
-
     /** 宽度 */
     width: number;
 
@@ -68,6 +66,9 @@ interface TableProps<T> {
 
     /** 调试模式 */
     debug?: boolean
+
+    /** 表格的实例 */
+    table?: React.MutableRefObject<TableInstance>
 
     /** 渲染单元格的事件 */
     onCellRender?: (element: ReactElement,cells: Cell) => ReactElement
@@ -158,8 +159,10 @@ function Table<T>({
     }
 
     useEffect(() => {
-        table.current = {
-            getScrollbarWidthOffset
+        if (table) {
+            table.current = {
+                getScrollbarWidthOffset
+            }
         }
     })
 
