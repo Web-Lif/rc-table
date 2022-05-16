@@ -53,7 +53,7 @@ export interface TableInstance {
     /** 获取表格的滚动条的宽度 */
     getScrollbarWidthOffset: () => number
 }
-interface TableProps<T> {
+export interface TableProps<T> {
 
     /** 宽度 */
     width: number;
