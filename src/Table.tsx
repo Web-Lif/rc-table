@@ -90,6 +90,9 @@ export interface TableProps<T> {
 
     /** 鼠标移入到表格触发的事件 */
     onMouseMove?: React.MouseEventHandler<HTMLDivElement>
+
+    /** 鼠标抬起事件 */
+    onMouseUp?: React.MouseEventHandler<HTMLDivElement>
 }
 
 function Table<T>({
@@ -104,7 +107,8 @@ function Table<T>({
     onRowDoubleClick,
     onRowMouseEnter,
     onRowMouseLeave,
-    onMouseMove
+    onMouseMove,
+    onMouseUp
 }: TableProps<T>) {
 
     const logTime = (label: string) => {
@@ -329,12 +333,14 @@ function Table<T>({
     return (
         <TableStyle
             ref={tableRef}
-            onMouseMove={onMouseMove}
             style={{
                 width,
                 height,
                 overflow: 'auto'
             }}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+
         >
             <StickyLeftRowWrapper
                 style={{
