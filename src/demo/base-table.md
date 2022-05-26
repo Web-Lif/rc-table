@@ -15,7 +15,7 @@ import { Table } from '@weblif/rc-table';
 
 const createRows = () => {
     const rows: Row[] = [];
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 1000; i += 1) {
         const cells = [];
 
         let sticky;
@@ -27,15 +27,17 @@ const createRows = () => {
         }
         for (let c = 0; c < 20; c += 1) {
             let stickyCell;
-
+            let width = 120
             if (c === 0) {
                 stickyCell = 'left';
             }
             if (c === 19 || c === 18) {
                 stickyCell = 'right';
+            } else if (c === 1) {
+                width = 240
             }
             cells.push({
-                width: 120,
+                width,
                 value: `${i} - ${c}`,
                 key: `${i}-${c}`,
                 sticky: stickyCell,
