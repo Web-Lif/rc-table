@@ -26,7 +26,7 @@ const TableWrapperStyle = styled.div`
     width: 100%;
     contain: style;
     box-sizing: border-box;
-    will-change: transform;
+    // will-change: transform;
 `;
 
 const StickyLeftRowWrapper = styled.div`
