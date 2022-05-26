@@ -1,13 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "jsx": "react",
-    "esModuleInterop": true,
-    "types": ["jest"],
-    "strict": true,
-    "skipLibCheck": true,
-    "declaration": true
-  }
+    "compilerOptions": {
+        "outDir": "es",
+        "target": "es5",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "esModuleInterop": true,
+        "types": ["jest"],
+        "strict": true,
+        "skipLibCheck": true,
+        "declaration": true
+    }
 }
