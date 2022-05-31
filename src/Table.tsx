@@ -11,6 +11,7 @@ import { getScrollbarWidth } from './utils/browser'
 const EmptyStyle = styled.div`
     position: sticky;
     left: 0px;
+    width: 100%;
     top: 50%;
     transform: translateY(-50%);
 `
@@ -345,11 +346,7 @@ function Table<T>({
     const renderEmptyRowsRenderer = () => {
         if (isEmptyRows) {
             return (
-                <EmptyStyle
-                    style={{
-                        width,
-                    }}
-                >
+                <EmptyStyle>
                     {onEmptyRowsRenderer?.()}
                 </EmptyStyle>
             )

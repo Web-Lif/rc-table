@@ -105,7 +105,7 @@ const createRows = () => {
             sticky = 'top';
             selectd = false;
         }
-        for (let c = 0; c < 20; c += 1) {
+        for (let c = 0; c < 5; c += 1) {
             let stickyCell;
             let width = 120;
             if (c === 0) {
