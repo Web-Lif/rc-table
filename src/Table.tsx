@@ -7,6 +7,14 @@ import { useViewportRows } from './hooks/useViewportRows';
 import { writeText } from './utils/clipboard'
 import { getScrollbarWidth } from './utils/browser'
 
+
+const EmptyStyle = styled.div`
+    position: sticky;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+`
+
 const TableStyle = styled.div`
     border-top: 1px solid var(--rc-table-border-color, #ddd);
     border-right: 1px solid var(--rc-table-border-color, #ddd);
@@ -43,7 +51,7 @@ const StickyRightRowWrapper = styled.div`
 `
 
 interface RowClickParam<T> {
-    event:  React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
     row: Row<T>
 }
 
@@ -69,8 +77,11 @@ export interface TableProps<T> {
     /** 表格的实例 */
     table?: React.MutableRefObject<TableInstance | null>
 
+    /** 空数据的时候渲染的信息 */
+    onEmptyRowsRenderer?: () => ReactElement
+
     /** 渲染单元格的事件 */
-    onCellRender?: (element: ReactElement,cells: Cell) => ReactElement
+    onCellRender?: (element: ReactElement, cells: Cell) => ReactElement
 
     /** 渲染行触发的事件 */
     onRowRender?: (element: ReactElement, row: Row<T>) => ReactElement
@@ -107,7 +118,8 @@ function Table<T>({
     onRowMouseEnter,
     onRowMouseLeave,
     onMouseMove,
-    onMouseUp
+    onMouseUp,
+    onEmptyRowsRenderer
 }: TableProps<T>) {
 
     const logTime = (label: string) => {
@@ -239,7 +251,7 @@ function Table<T>({
                 }}
             >
                 {row.cells.map((cell) => {
-                    if (cell.sticky &&  key === undefined) {
+                    if (cell.sticky && key === undefined) {
                         return (
                             <div
                                 style={{
@@ -259,7 +271,7 @@ function Table<T>({
                 })}
             </TableRow>
         )
-        if (onRowRender){
+        if (onRowRender) {
             rowElement = onRowRender(rowElement, row)
         }
         return rowElement
@@ -275,7 +287,7 @@ function Table<T>({
             const cssStyle: CSSProperties = {
             };
 
-            if (row.key === rows[rows.length -1].key) {
+            if (row.key === rows[rows.length - 1].key) {
                 cssStyle.borderBottom = 'initial'
             }
 
@@ -298,7 +310,7 @@ function Table<T>({
 
 
     logTime('renderRow')
-    const { contentRow, stickyRows} = useMemo(() => {
+    const { contentRow, stickyRows } = useMemo(() => {
         return renderRow()
     }, [viewportRows, viewportStickyRows])
     logTimeEnd('renderRow')
@@ -328,6 +340,22 @@ function Table<T>({
         viewportStickyRowRightWidth += cell.width || 0
     })
 
+    const isEmptyRows = contentRow.filter(row => (row.key as string).indexOf('-padding') === -1).length === 0
+
+    const renderEmptyRowsRenderer = () => {
+        if (isEmptyRows) {
+            return (
+                <EmptyStyle
+                    style={{
+                        width,
+                    }}
+                >
+                    {onEmptyRowsRenderer?.()}
+                </EmptyStyle>
+            )
+        }
+        return null
+    }
 
     return (
         <TableStyle
@@ -352,10 +380,10 @@ function Table<T>({
                             position: 'absolute',
                             top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
                             zIndex: 15,
-                        },'StickyLeftRowWrapper')
+                        }, 'StickyLeftRowWrapper')
                     }
                     if (row.sticky) {
-                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
+                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
                     }
                     return createRowElement(row, {
                         height: row.height,
@@ -376,14 +404,13 @@ function Table<T>({
                         }, 'StickyRightRowWrapper')
                     }
                     if (row.sticky) {
-                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }}/>
+                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
                     }
                     return createRowElement(row, {
                         height: row.height,
                     }, 'StickyLeftRowWrapper')
                 })}
             </StickyRightRowWrapper>
-
             <div
                 style={{
                     height: scrollHeight,
@@ -411,6 +438,7 @@ function Table<T>({
             >
                 {stickyRows}
             </TableWrapperStyle>
+            {renderEmptyRowsRenderer()}
         </TableStyle>
     );
 }
