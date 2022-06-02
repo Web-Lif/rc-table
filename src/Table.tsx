@@ -23,6 +23,7 @@ const TableStyle = styled.div`
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
+    will-change: scroll-position;
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
     }
@@ -56,6 +57,7 @@ const ScrollBar = styled.div`
 const ScrollBarThumb = styled.div`
     background: #00000080;
     border-radius: 99px;
+    cursor: pointer;
     user-select: none;
 `
 
@@ -331,7 +333,7 @@ function Table<T>({
                     if (
                         tableRef.current &&
                         tableRef.current.scrollLeft + deltaX <= scrollWidth - width &&
-                        tableRef.current.scrollTop + deltaY <= scrollHeight - height
+                        tableRef.current.scrollTop + deltaY <= scrollHeight - height + 2
                     ) {
 
                         tableRef.current.scrollTop += deltaY
@@ -377,6 +379,7 @@ function Table<T>({
                         position: 'absolute',
                         height: yScale * height,
                         top:  yScale * scroll.top,
+                        minHeight: 10,
                         width: '100%'
                     }}
                 />
@@ -395,7 +398,8 @@ function Table<T>({
                         position: 'absolute',
                         width: xScale * width,
                         left:  xScale * scroll.left,
-                        height: '100%'
+                        height: '100%',
+                        minWidth: 10
                     }}
                 />
             </ScrollBar>
