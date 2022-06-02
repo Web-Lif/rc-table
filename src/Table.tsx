@@ -21,7 +21,7 @@ const TableStyle = styled.div`
     border-bottom: 1px solid var(--rc-table-border-color, #ddd);
     border-collapse: collapse;
     position: relative;
-    overflow: auto;
+    overflow: hidden;
     box-sizing: border-box;
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
@@ -51,15 +51,12 @@ const StickyRightRowWrapper = styled.div`
 
 const ScrollBar = styled.div`
     z-index: 20;
-    width: 8px;
 `
 
 const ScrollBarThumb = styled.div`
     background: #00000080;
     border-radius: 99px;
-    cursor: pointer;
     user-select: none;
-    width: 100%;
 `
 
 interface RowClickParam<T> {
@@ -324,6 +321,43 @@ function Table<T>({
         return null
     }
 
+    useEffect(() => {
+
+        const onWheel = (event: WheelEvent) => {
+            event.preventDefault()
+            if (!ticking.current) {
+                requestAnimationFrame(() => {
+                    const { deltaX, deltaY } = event
+                    if (
+                        tableRef.current &&
+                        tableRef.current.scrollLeft + deltaX <= scrollWidth - width &&
+                        tableRef.current.scrollTop + deltaY <= scrollHeight - height
+                    ) {
+
+                        tableRef.current.scrollTop += deltaY
+                        tableRef.current.scrollLeft += deltaX
+
+                        setScroll({
+                            top: tableRef.current.scrollTop,
+                            left: tableRef.current.scrollLeft,
+                        });
+                    }
+                    ticking.current = false;
+                });
+                ticking.current = true;
+            }
+        }
+
+        tableRef.current?.addEventListener('wheel', onWheel, { passive: false })
+        return () => {
+            tableRef.current?.removeEventListener('wheel', onWheel)
+        }
+    }, [])
+
+
+    const yScale = scrollHeight > height ? height / scrollHeight : 0
+    const xScale = scrollWidth > width ? width / scrollWidth : 0
+
     return (
         <div
             style={{
@@ -334,40 +368,48 @@ function Table<T>({
                 style={{
                     position: 'absolute',
                     left: width - 8,
+                    width: 8,
                     height,
                 }}
             >
-                <ScrollBarThumb />
+                <ScrollBarThumb
+                    style={{
+                        position: 'absolute',
+                        height: yScale * height,
+                        top:  yScale * scroll.top,
+                        width: '100%'
+                    }}
+                />
+            </ScrollBar>
+
+            <ScrollBar
+                style={{
+                    position: 'absolute',
+                    top: height - 8,
+                    height: 8,
+                    width,
+                }}
+            >
+                <ScrollBarThumb
+                    style={{
+                        position: 'absolute',
+                        width: xScale * width,
+                        left:  xScale * scroll.left,
+                        height: '100%'
+                    }}
+                />
             </ScrollBar>
             <TableStyle
                 ref={tableRef}
                 style={{
                     width,
                     height,
-                    overflow: 'hidden'
                 }}
-                onMouseMove={onMouseMove}
-                onMouseUp={onMouseUp}
-                onWheel={(event) => {
-                    event.preventDefault();
-                    if (!ticking.current) {
-                        requestAnimationFrame(() => {
-                            if (tableRef.current) {
-                                const { deltaX, deltaY} = event
-                                if (tableRef.current) {
-                                    tableRef.current.scrollTop += deltaY
-                                    tableRef.current.scrollLeft += deltaX
-                                    setScroll({
-                                        top: tableRef.current.scrollTop,
-                                        left: tableRef.current.scrollLeft,
-                                    });
-                                }
-                            }
-                            ticking.current = false;
-                        });
-                        ticking.current = true;
-                    }
-
+                onMouseMove={(event) => {
+                    onMouseMove?.(event)
+                }}
+                onMouseUp={(event) => {
+                    onMouseUp?.(event)
                 }}
             >
                 <StickyLeftRowWrapper
@@ -416,7 +458,6 @@ function Table<T>({
                     style={{
                         height: scrollHeight,
                         width: scrollWidth,
-                        minHeight: scrollHeight,
                         position: 'absolute',
                         overflow: 'hidden',
                     }}
