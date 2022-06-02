@@ -5,8 +5,6 @@ import TableCell from './Cell';
 import { Cell, Row } from './types';
 import { useViewportRows } from './hooks/useViewportRows';
 import { writeText } from './utils/clipboard'
-import { getScrollbarWidth } from './utils/browser'
-
 
 const EmptyStyle = styled.div`
     position: sticky;
@@ -51,16 +49,24 @@ const StickyRightRowWrapper = styled.div`
     box-sizing: border-box;
 `
 
+const ScrollBar = styled.div`
+    z-index: 20;
+    width: 8px;
+`
+
+const ScrollBarThumb = styled.div`
+    background: #00000080;
+    border-radius: 99px;
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+`
+
 interface RowClickParam<T> {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
     row: Row<T>
 }
 
-
-export interface TableInstance {
-    /** 获取表格的滚动条的宽度 */
-    getScrollbarWidthOffset: () => number
-}
 export interface TableProps<T> {
 
     /** 宽度 */
@@ -74,9 +80,6 @@ export interface TableProps<T> {
 
     /** 调试模式 */
     debug?: boolean
-
-    /** 表格的实例 */
-    table?: React.MutableRefObject<TableInstance | null>
 
     /** 空数据的时候渲染的信息 */
     onEmptyRowsRenderer?: () => ReactElement
@@ -111,7 +114,6 @@ function Table<T>({
     height,
     rows,
     debug,
-    table,
     onCellRender,
     onRowRender,
     onRowClick,
@@ -170,19 +172,6 @@ function Table<T>({
 
     const ticking = useRef<boolean>(false);
 
-    const getScrollbarWidthOffset = () => {
-        if (scrollHeight <= height) {
-            return 0
-        }
-
-        return getScrollbarWidth()
-    }
-
-    if (table) {
-        table.current = {
-            getScrollbarWidthOffset
-        }
-    }
 
     const createCellElement = (cell: Cell, cssStyle: CSSProperties = {}, key?: Key) => {
         const isSelect = cell.key === cellKey
@@ -316,25 +305,6 @@ function Table<T>({
     }, [viewportRows, viewportStickyRows])
     logTimeEnd('renderRow')
 
-    useEffect(() => {
-        tableRef.current?.addEventListener('scroll', () => {
-            if (!ticking.current) {
-                requestAnimationFrame(() => {
-                    if (tableRef.current) {
-                        const { scrollTop, scrollLeft } = tableRef.current;
-                        setScroll({
-                            top: scrollTop,
-                            left: scrollLeft,
-                        });
-                    }
-                    ticking.current = false;
-                });
-                ticking.current = true;
-            }
-        }, { passive: true })
-    }, [])
-
-
     let viewportStickyRowRightWidth = 0
 
     viewportStickyRowRight?.[0]?.cells?.forEach(cell => {
@@ -355,88 +325,123 @@ function Table<T>({
     }
 
     return (
-        <TableStyle
-            ref={tableRef}
+        <div
             style={{
-                width,
-                height,
-                overflow: 'auto'
+                position: 'relative'
             }}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-
         >
-            <StickyLeftRowWrapper
+            <ScrollBar
                 style={{
-                    transform: `translate3d(${scroll.left || 0}px,${scrollRow?.top || 0}px, 0px)`
-                }}
-            >
-                {viewportStickyRowLeft.map((row) => {
-                    if (row.sticky === 'topLeft') {
-                        return createRowElement(row, {
-                            position: 'absolute',
-                            top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
-                            zIndex: 15,
-                        }, 'StickyLeftRowWrapper')
-                    }
-                    if (row.sticky) {
-                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
-                    }
-                    return createRowElement(row, {
-                        height: row.height,
-                    }, 'StickyLeftRowWrapper')
-                })}
-            </StickyLeftRowWrapper>
-            <StickyRightRowWrapper
-                style={{
-                    transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth - getScrollbarWidthOffset() - 2}px,${scrollRow?.top || 0}px, 0px)`
-                }}
-            >
-                {viewportStickyRowRight.map((row) => {
-                    if (row.sticky === 'topRight') {
-                        return createRowElement(row, {
-                            position: 'absolute',
-                            top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
-                            zIndex: 15,
-                        }, 'StickyRightRowWrapper')
-                    }
-                    if (row.sticky) {
-                        return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
-                    }
-                    return createRowElement(row, {
-                        height: row.height,
-                    }, 'StickyLeftRowWrapper')
-                })}
-            </StickyRightRowWrapper>
-            <div
-                style={{
-                    height: scrollHeight,
-                    width: scrollWidth,
-                    minHeight: scrollHeight,
                     position: 'absolute',
-                    overflow: 'hidden',
+                    left: width - 8,
+                    height,
                 }}
             >
-                <TableWrapperStyle
+                <ScrollBarThumb />
+            </ScrollBar>
+            <TableStyle
+                ref={tableRef}
+                style={{
+                    width,
+                    height,
+                    overflow: 'hidden'
+                }}
+                onMouseMove={onMouseMove}
+                onMouseUp={onMouseUp}
+                onWheel={(event) => {
+                    event.preventDefault();
+                    if (!ticking.current) {
+                        requestAnimationFrame(() => {
+                            if (tableRef.current) {
+                                const { deltaX, deltaY} = event
+                                if (tableRef.current) {
+                                    tableRef.current.scrollTop += deltaY
+                                    tableRef.current.scrollLeft += deltaX
+                                    setScroll({
+                                        top: tableRef.current.scrollTop,
+                                        left: tableRef.current.scrollLeft,
+                                    });
+                                }
+                            }
+                            ticking.current = false;
+                        });
+                        ticking.current = true;
+                    }
+
+                }}
+            >
+                <StickyLeftRowWrapper
                     style={{
-                        transform: getTransform(),
+                        transform: `translate3d(${scroll.left || 0}px,${scrollRow?.top || 0}px, 0px)`
                     }}
                 >
-                    {contentRow}
+                    {viewportStickyRowLeft.map((row) => {
+                        if (row.sticky === 'topLeft') {
+                            return createRowElement(row, {
+                                position: 'absolute',
+                                top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
+                                zIndex: 15,
+                            }, 'StickyLeftRowWrapper')
+                        }
+                        if (row.sticky) {
+                            return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
+                        }
+                        return createRowElement(row, {
+                            height: row.height,
+                        }, 'StickyLeftRowWrapper')
+                    })}
+                </StickyLeftRowWrapper>
+                <StickyRightRowWrapper
+                    style={{
+                        transform: `translate3d(${(scroll.left + width) - viewportStickyRowRightWidth}px,${scrollRow?.top || 0}px, 0px)`
+                    }}
+                >
+                    {viewportStickyRowRight.map((row) => {
+                        if (row.sticky === 'topRight') {
+                            return createRowElement(row, {
+                                position: 'absolute',
+                                top: scroll.top - (scrollRow?.top || 0) + (row.top || 0),
+                                zIndex: 15,
+                            }, 'StickyRightRowWrapper')
+                        }
+                        if (row.sticky) {
+                            return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
+                        }
+                        return createRowElement(row, {
+                            height: row.height,
+                        }, 'StickyLeftRowWrapper')
+                    })}
+                </StickyRightRowWrapper>
+                <div
+                    style={{
+                        height: scrollHeight,
+                        width: scrollWidth,
+                        minHeight: scrollHeight,
+                        position: 'absolute',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <TableWrapperStyle
+                        style={{
+                            transform: getTransform(),
+                        }}
+                    >
+                        {contentRow}
+                    </TableWrapperStyle>
+                </div>
+                <TableWrapperStyle
+                    style={{
+                        position: 'sticky',
+                        transform: `translate3d(${translateX}px, 0px, 0px)`,
+                        top: 0,
+                        zIndex: 10
+                    }}
+                >
+                    {stickyRows}
                 </TableWrapperStyle>
-            </div>
-            <TableWrapperStyle
-                style={{
-                    position: 'sticky',
-                    transform: `translate3d(${translateX}px, 0px, 0px)`,
-                    top: 0,
-                    zIndex: 10
-                }}
-            >
-                {stickyRows}
-            </TableWrapperStyle>
-            {renderEmptyRowsRenderer()}
-        </TableStyle>
+                {renderEmptyRowsRenderer()}
+            </TableStyle>
+        </div>
     );
 }
 export default Table;
