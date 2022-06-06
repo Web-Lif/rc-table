@@ -39,6 +39,7 @@
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
     "@types/styled-components": "^5.1.18",
+    "@types/underscore": "^1.11.4",
     "@umijs/fabric": "^2.8.1",
     "@umijs/test": "^3.0.5",
     "cross-env": "^7.0.3",
@@ -51,7 +52,8 @@
     "yorkie": "^2.0.0"
   },
   "dependencies": {
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "underscore": "^1.13.4"
   },
   "license": "MIT"
 }

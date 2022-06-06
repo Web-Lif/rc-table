@@ -1,5 +1,6 @@
 import React, { CSSProperties, Key, ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { debounce } from 'underscore'
 import TableRow from './Row';
 import TableCell from './Cell';
 import { Cell, Row } from './types';
@@ -323,42 +324,117 @@ function Table<T>({
         return null
     }
 
-    useEffect(() => {
 
+    const lastMouseMove = useRef<{
+        x: number
+        y: number
+    }>({
+        x: -1,
+        y: -1
+    })
+
+
+    const yScale = scrollHeight > height ? height / scrollHeight : 0
+    const xScale = scrollWidth > width ? width / scrollWidth : 0
+    const lastScroll = useRef<{
+        top: number
+        left: number
+    }>({
+        top: 0,
+        left: 0
+    })
+    const mouseMoveTicking = useRef<boolean>(false);
+
+    useEffect(() => {
         const onWheel = (event: WheelEvent) => {
             event.preventDefault()
-            if (!ticking.current) {
+            if (!mouseMoveTicking.current) {
                 requestAnimationFrame(() => {
                     const { deltaX, deltaY } = event
                     if (
-                        tableRef.current &&
-                        tableRef.current.scrollLeft + deltaX <= scrollWidth - width &&
-                        tableRef.current.scrollTop + deltaY <= scrollHeight - height + 2
+                        tableRef.current
                     ) {
 
-                        tableRef.current.scrollTop += deltaY
-                        tableRef.current.scrollLeft += deltaX
+                        if (tableRef.current.scrollLeft + deltaX >= scrollWidth - width) {
+                            tableRef.current.scrollLeft = scrollWidth - width
+                        } else {
+                            tableRef.current.scrollLeft += deltaX
+                        }
+
+                        if (tableRef.current.scrollTop + deltaY >= scrollHeight - height) {
+                            tableRef.current.scrollTop = scrollHeight - height + 1
+                        } else {
+                            tableRef.current.scrollTop += deltaY
+                        }
 
                         setScroll({
                             top: tableRef.current.scrollTop,
                             left: tableRef.current.scrollLeft,
                         });
                     }
-                    ticking.current = false;
+                    mouseMoveTicking.current = false;
                 });
-                ticking.current = true;
+                mouseMoveTicking.current = true;
             }
         }
 
         tableRef.current?.addEventListener('wheel', onWheel, { passive: false })
+
+        const onMouseMove = (e: MouseEvent) => {
+            if (!ticking.current) {
+                requestAnimationFrame(() => {
+                    if (tableRef.current && (lastMouseMove.current.x !== -1 || lastMouseMove.current.y !== -1)) {
+                        const moveX = Math.ceil((e.pageX - lastMouseMove.current.x) / xScale)
+                        if (lastScroll.current.left !== -1) {
+                            if ( lastScroll.current.left + moveX >= scrollWidth - width ) {
+                                tableRef.current!.scrollLeft = scrollWidth - width
+                            } else {
+                                tableRef.current!.scrollLeft = lastScroll.current.left + moveX
+                            }
+                        }
+
+                        const moveY = Math.ceil((e.pageY - lastMouseMove.current.y) / yScale)
+                        if (lastScroll.current.top !== -1) {
+                            if (lastScroll.current.top + moveY >= scrollHeight - height ) {
+                                tableRef.current!.scrollTop = scrollHeight - height
+                            } else {
+                                tableRef.current!.scrollTop = lastScroll.current.top + moveY
+                            }
+                        }
+
+                        setScroll({
+                            top: tableRef.current!.scrollTop,
+                            left: tableRef.current!.scrollLeft,
+                        })
+                    }
+                    ticking.current = false;
+                });
+                ticking.current = true;
+            }
+
+        }
+
+        const onMouseUp = (_e: MouseEvent) => {
+            lastMouseMove.current = {
+                x: -1,
+                y: -1
+            }
+            lastScroll.current = {
+                top: 0,
+                left: 0
+            }
+        }
+
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', onMouseUp)
         return () => {
             tableRef.current?.removeEventListener('wheel', onWheel)
+            document.removeEventListener('mousemove', onMouseMove)
+            document.removeEventListener('mouseup', onMouseUp)
         }
     }, [])
 
 
-    const yScale = scrollHeight > height ? height / scrollHeight : 0
-    const xScale = scrollWidth > width ? width / scrollWidth : 0
 
     return (
         <div
@@ -379,8 +455,14 @@ function Table<T>({
                         position: 'absolute',
                         height: yScale * height,
                         top:  yScale * scroll.top,
-                        minHeight: 10,
                         width: '100%'
+                    }}
+                    onMouseDown={(e) => {
+                        if (e.button === 0) {
+                            lastMouseMove.current.y = e.pageY
+                            lastScroll.current.top = (tableRef.current?.scrollTop || 0)
+                            lastScroll.current.left = -1
+                        }
                     }}
                 />
             </ScrollBar>
@@ -399,7 +481,13 @@ function Table<T>({
                         width: xScale * width,
                         left:  xScale * scroll.left,
                         height: '100%',
-                        minWidth: 10
+                    }}
+                    onMouseDown={(e) => {
+                        if (e.button === 0) {
+                            lastMouseMove.current.x = e.pageX
+                            lastScroll.current.left = (tableRef.current?.scrollLeft || 0)
+                            lastScroll.current.top = -1
+                        }
                     }}
                 />
             </ScrollBar>
