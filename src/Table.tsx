@@ -1,6 +1,5 @@
 import React, { CSSProperties, Key, ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { debounce } from 'underscore'
 import TableRow from './Row';
 import TableCell from './Cell';
 import { Cell, Row } from './types';

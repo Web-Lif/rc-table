@@ -52,8 +52,7 @@
     "yorkie": "^2.0.0"
   },
   "dependencies": {
-    "styled-components": "^5.3.3",
-    "underscore": "^1.13.4"
+    "styled-components": "^5.3.3"
   },
   "license": "MIT"
 }
