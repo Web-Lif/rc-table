@@ -15,7 +15,7 @@ import { Table } from '@weblif/rc-table';
 
 const createRows = () => {
     const rows: Row[] = [];
-    for (let i = 0; i < 100; i += 1) {
+    for (let i = 0; i < 2000; i += 1) {
         const cells = [];
 
         let sticky;
@@ -31,11 +31,7 @@ const createRows = () => {
             if (c === 0) {
                 stickyCell = 'left';
             }
-            if (c === 19 || c === 18) {
-                stickyCell = 'right';
-            } else if (c === 1) {
-                width = 240;
-            }
+
             cells.push({
                 width,
                 value: `${i} - ${c}`,
@@ -144,7 +140,7 @@ const BaseTable = () => {
             debug
             height={600}
             rows={rows}
-            onEmptyRowsRenderer={() => <div> 当期数据为空 </div>}
+            onEmptyRowsRenderer={() => <div> 数据为空 </div>}
             onRowMouseOver={(e, table) => {
                 const classNames = e.currentTarget.className.split(' ');
                 const className = classNames.find((className) =>

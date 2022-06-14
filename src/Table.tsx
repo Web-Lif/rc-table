@@ -434,7 +434,34 @@ function Table<T>({
     }, [])
 
 
+    const getYThumbHeight = () => {
+        if (yScale * height <= 30 && yScale * height !== 0) {
 
+            return 30
+        }
+        return yScale * height
+    }
+
+    const getYTop = () => {
+        if (getYThumbHeight() === 30) {
+            return yScale * (scroll.top * (height / (height + 30)))
+        }
+        return yScale * scroll.top
+    }
+
+    const getXThumbHeight = () => {
+        if (xScale * width<= 30 && xScale * width !== 0) {
+            return 30
+        }
+        return xScale * width
+    }
+
+    const getXTop = () => {
+        if (getXThumbHeight() === 30) {
+            return xScale * (scroll.left * (width / (width + 30)))
+        }
+        return xScale * scroll.left
+    }
     return (
         <div
             style={{
@@ -452,8 +479,8 @@ function Table<T>({
                 <ScrollBarThumb
                     style={{
                         position: 'absolute',
-                        height: yScale * height,
-                        top:  yScale * scroll.top,
+                        height: getYThumbHeight(),
+                        top:  getYTop(),
                         width: '100%'
                     }}
                     onMouseDown={(e) => {
@@ -477,8 +504,8 @@ function Table<T>({
                 <ScrollBarThumb
                     style={{
                         position: 'absolute',
-                        width: xScale * width,
-                        left:  xScale * scroll.left,
+                        width: getXThumbHeight(),
+                        left:  getXTop(),
                         height: '100%',
                     }}
                     onMouseDown={(e) => {
