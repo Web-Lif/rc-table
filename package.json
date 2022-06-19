@@ -46,7 +46,7 @@
     "dumi": "1.1.42",
     "father-build": "1.22.2",
     "gh-pages": "3.2.3",
-    "lint-staged": "10.5.4",
+    "lint-staged": "13.0.2",
     "prettier": "2.6.2",
     "rimraf": "3.0.2",
     "yorkie": "2.0.0"
