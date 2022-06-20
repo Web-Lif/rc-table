@@ -47,7 +47,7 @@
     "father-build": "1.22.2",
     "gh-pages": "4.0.0",
     "lint-staged": "13.0.2",
-    "prettier": "2.6.2",
+    "prettier": "2.7.1",
     "rimraf": "3.0.2",
     "yorkie": "2.0.0"
   },
