@@ -36,7 +36,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.5",
-    "@types/jest": "28.1.4",
+    "@types/jest": "28.1.6",
     "@types/lodash": "4.14.182",
     "@types/styled-components": "5.1.25",
     "@types/underscore": "1.11.4",
