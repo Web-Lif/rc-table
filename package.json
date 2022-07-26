@@ -40,7 +40,7 @@
     "@types/lodash": "4.14.182",
     "@types/styled-components": "5.1.25",
     "@types/underscore": "1.11.4",
-    "@umijs/fabric": "2.12.2",
+    "@umijs/fabric": "3.0.0",
     "@umijs/test": "4.0.8",
     "cross-env": "7.0.3",
     "dumi": "1.1.46",
