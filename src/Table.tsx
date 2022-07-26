@@ -101,6 +101,9 @@ export interface TableProps<T> {
     /** 鼠标移出到行触发的事件 */
     onRowMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, div: HTMLDivElement) => void
 
+    /** 在行上右键菜单信息 */
+    onRowContextMenu?: (row: Row<T>, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+
     /** 鼠标移入到表格触发的事件 */
     onMouseMove?: React.MouseEventHandler<HTMLDivElement>
 
@@ -121,7 +124,8 @@ function Table<T>({
     onRowMouseLeave,
     onMouseMove,
     onMouseUp,
-    onEmptyRowsRenderer
+    onEmptyRowsRenderer,
+    onRowContextMenu
 }: TableProps<T>) {
 
     const logTime = (label: string) => {
@@ -231,7 +235,9 @@ function Table<T>({
                 onMouseLeave={(e) => {
                     onRowMouseLeave?.(e, tableRef.current!)
                 }}
-
+                onContextMenu={(e) => {
+                    onRowContextMenu?.(row, e)
+                }}
                 onDoubleClick={(e) => {
                     onRowDoubleClick?.({
                         event: e,
