@@ -437,7 +437,7 @@ function Table<T>({
             document.removeEventListener('mousemove', onMouseMove)
             document.removeEventListener('mouseup', onMouseUp)
         }
-    }, [])
+    }, [scrollWidth, scrollHeight])
 
 
     const getYThumbHeight = () => {
