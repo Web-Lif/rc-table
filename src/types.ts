@@ -31,7 +31,7 @@ export interface Row<T> {
     /** 内部使用属性 */
     top?: number;
     /** 是否固定行 */
-    sticky?: 'top' | 'topLeft' | 'topRight';
+    sticky?: 'top' | 'topLeft' | 'topRight' | 'bottom';
     /** 行的的类名 */
     className?: string;
     /** 所在的真实的索引 */

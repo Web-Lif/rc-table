@@ -92,9 +92,11 @@ export function useViewportRows<T>({
 
     const resRows: Row<T>[] = []
 
-    const stickyRows: Row<T>[] = []
+    const stickyRowsTop: Row<T>[] = []
+    const stickyRowsBottom: Row<T>[] = []
 
     let scrollHeightTop = 0
+
 
     const getViewportCells = (row: Row<T>, callback?: (cell: Cell) => void) => {
         const resCell: Cell[] = []
@@ -126,20 +128,22 @@ export function useViewportRows<T>({
     const stickyRowLeft: Row<T>[] = []
     const stickyRowRight: Row<T>[] = []
 
-    rows.some((row, index) => {
-        if (row.sticky) {
+    let bottomStickyTop = 0
+    rows.forEach(row => {
+        if (row.sticky === 'bottom') {
+            bottomStickyTop += row.height
+            const { className = '', ...restRow } = row
             const stickyRow = {
-                ...row,
-                top: scrollHeightTop,
+                ...restRow,
+                className: `${className} rc-table-row-bottom`,
+                top: bottomStickyTop
             }
             const stickyLeftCells: Cell[] = []
             const stickyRightCells: Cell[] = []
-            let stickyDirection: 'left' | 'right' | undefined = undefined;
-            stickyRows.push({
+            stickyRowsBottom.push({
                 ...stickyRow,
                 cells: getViewportCells(stickyRow, (current) => {
                     if (current.sticky) {
-                        stickyDirection = current.sticky
                         if (current.sticky === 'left') {
                             stickyLeftCells.push({
                                 ...current,
@@ -153,6 +157,48 @@ export function useViewportRows<T>({
                 })
             })
 
+            if (stickyLeftCells.length > 0) {
+                stickyRowLeft.push({
+                    ...stickyRow,
+                    cells: stickyLeftCells,
+                    sticky: 'bottom'
+                })
+            }
+
+            if (stickyRightCells.length > 0) {
+                stickyRowRight.push({
+                    ...stickyRow,
+                    cells: stickyRightCells,
+                    sticky: 'bottom'
+                })
+            }
+        }
+    })
+
+    rows.some((row, index) => {
+        if (row.sticky === 'top' || row.sticky === 'topLeft' || row.sticky === 'topRight') {
+            const stickyRow = {
+                ...row,
+                top: scrollHeightTop,
+            }
+            const stickyLeftCells: Cell[] = []
+            const stickyRightCells: Cell[] = []
+            stickyRowsTop.push({
+                ...stickyRow,
+                cells: getViewportCells(stickyRow, (current) => {
+                    if (current.sticky) {
+                        if (current.sticky === 'left') {
+                            stickyLeftCells.push({
+                                ...current,
+                            })
+                        } else if (current.sticky === 'right') {
+                            stickyRightCells.push({
+                                ...current
+                            })
+                        }
+                    }
+                })
+            })
 
             if (stickyLeftCells.length > 0) {
                 stickyRowLeft.push({
@@ -161,6 +207,7 @@ export function useViewportRows<T>({
                     sticky: 'topLeft'
                 })
             }
+
             if (stickyRightCells.length > 0) {
                 stickyRowRight.push({
                     ...stickyRow,
@@ -234,9 +281,11 @@ export function useViewportRows<T>({
         return false
     })
 
+
     return {
         rows: resRows,
-        stickyRows,
+        stickyRowsTop,
+        stickyRowsBottom,
         stickyRowLeft,
         stickyRowRight,
         scrollWidth,
