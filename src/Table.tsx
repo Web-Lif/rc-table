@@ -27,6 +27,11 @@ const TableStyle = styled.div`
     .rc-table-cell-select {
         box-shadow: inset 0 0 0 1.1px var(--rc-table-cell-selection-color, #1890ff);
     }
+    .rc-table-row-bottom {
+        > div {
+            border-top: 1px solid var(--rc-table-border-color, #ddd);
+        }
+    }
 
 `;
 
@@ -48,6 +53,10 @@ const StickyRightRowWrapper = styled.div`
     z-index: 11;
     box-shadow: -2px 0 5px -2px hsl(0deg 0% 53% / 30%);
     box-sizing: border-box;
+`
+
+const StickyLeftBottomWrapper = styled.div`
+    width: 100%;
 `
 
 const ScrollBar = styled.div`
@@ -154,9 +163,10 @@ function Table<T>({
         scrollHeight,
         scrollWidth,
         rows: viewportRows,
-        stickyRows: viewportStickyRows,
+        stickyRowsTop: viewportStickyRowsTop,
         stickyRowLeft: viewportStickyRowLeft,
-        stickyRowRight: viewportStickyRowRight
+        stickyRowRight: viewportStickyRowRight,
+        stickyRowsBottom: viewportStickyRowBottom,
     } = useViewportRows<T>({
         rows,
         width,
@@ -287,14 +297,14 @@ function Table<T>({
             }
 
             if (row.sticky) {
-                return <div key={`${row.key}-padding`} style={{ height: row.height }} />
+                return <div key={`${row.key}-padding`} style={{ height: row.height, boxSizing: 'border-box'}} />
             }
 
             return createRowElement(row, cssStyle)
         })
         return {
             contentRow,
-            stickyRows: viewportStickyRows.map((row, index) => {
+            stickyRows: viewportStickyRowsTop.map((row, index) => {
                 const cssStyle: CSSProperties = {
                     height: row.height,
                 };
@@ -307,7 +317,7 @@ function Table<T>({
     logTime('renderRow')
     const { contentRow, stickyRows } = useMemo(() => {
         return renderRow()
-    }, [viewportRows, viewportStickyRows])
+    }, [viewportRows, viewportStickyRowsTop])
     logTimeEnd('renderRow')
 
     let viewportStickyRowRightWidth = 0
@@ -479,10 +489,11 @@ function Table<T>({
         }
         return xScale * scroll.left
     }
+
     return (
         <div
             style={{
-                position: 'relative'
+                position: 'relative',
             }}
         >
             <ScrollBar
@@ -560,6 +571,13 @@ function Table<T>({
                                 zIndex: 15,
                             }, 'StickyLeftRowWrapper')
                         }
+                        if (row.sticky === 'bottom') {
+                            return createRowElement(row, {
+                                position: 'absolute',
+                                top: (scroll.top - (scrollRow?.top || 0)) + height - (row.top || 0) - 1.5,
+                                zIndex: 20,
+                            }, 'StickyLeftRowBottomWrapper')
+                        }
                         if (row.sticky) {
                             return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
                         }
@@ -581,6 +599,15 @@ function Table<T>({
                                 zIndex: 15,
                             }, 'StickyRightRowWrapper')
                         }
+
+                        if (row.sticky === 'bottom') {
+                            return createRowElement(row, {
+                                position: 'absolute',
+                                top: (scroll.top - (scrollRow?.top || 0)) + height - (row.top || 0) - 1.5,
+                                zIndex: 20,
+                            }, 'StickyRightRowBottomWrapper')
+                        }
+
                         if (row.sticky) {
                             return <div key={`${row.key}-padding-StickyLeftRowWrapper`} style={{ height: row.height }} />
                         }
@@ -589,6 +616,7 @@ function Table<T>({
                         }, 'StickyLeftRowWrapper')
                     })}
                 </StickyRightRowWrapper>
+
                 <div
                     style={{
                         height: scrollHeight,
@@ -615,6 +643,20 @@ function Table<T>({
                 >
                     {stickyRows}
                 </TableWrapperStyle>
+                <StickyLeftBottomWrapper
+                    style={{
+                        position: 'sticky',
+                        transform: `translate3d(${translateX}px, 0px, 0px)`,
+                        top: height - (viewportStickyRowBottom?.[0]?.top || 0) - 1.5,
+                        zIndex: 10
+                    }}
+                >
+                    {viewportStickyRowBottom.map((row) => {
+                        return createRowElement(row, {
+                            height: row.height,
+                        }, 'StickyLeftRowWrapper')
+                    })}
+                </StickyLeftBottomWrapper>
                 {renderEmptyRowsRenderer()}
             </TableStyle>
         </div>
