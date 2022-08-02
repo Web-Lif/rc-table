@@ -356,7 +356,18 @@ function Table<T>({
             if (!mouseMoveTicking.current) {
                 requestAnimationFrame(() => {
                     const { deltaX, deltaY } = event
-                    if (
+
+                    if (tableRef.current && event.shiftKey) {
+                        if (tableRef.current.scrollLeft + deltaY >= scrollWidth - width) {
+                            tableRef.current.scrollLeft = scrollWidth - width
+                        } else {
+                            tableRef.current.scrollLeft += deltaY
+                        }
+                        setScroll({
+                            top: tableRef.current.scrollTop,
+                            left: tableRef.current.scrollLeft,
+                        });
+                    } else if (
                         tableRef.current
                     ) {
 
