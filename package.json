@@ -41,7 +41,7 @@
     "@types/styled-components": "5.1.25",
     "@types/underscore": "1.11.4",
     "@umijs/fabric": "3.0.0",
-    "@umijs/test": "4.0.9",
+    "@umijs/test": "4.0.11",
     "cross-env": "7.0.3",
     "dumi": "1.1.46",
     "father-build": "1.22.3",
