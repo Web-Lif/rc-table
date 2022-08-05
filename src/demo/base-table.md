@@ -34,6 +34,8 @@ const createRows = () => {
             let width = 120;
             if (c === 0) {
                 stickyCell = 'left';
+            } else if (c === 19) {
+                stickyCell = 'right';
             }
 
             cells.push({

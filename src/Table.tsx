@@ -508,7 +508,7 @@ function Table<T>({
                     style={{
                         position: 'absolute',
                         height: getYThumbHeight(),
-                        top:  getYTop(),
+                        transform: `translate3d(0px, ${getYTop()}px, 0px)`,
                         width: '100%'
                     }}
                     onMouseDown={(e) => {
@@ -524,7 +524,7 @@ function Table<T>({
             <ScrollBar
                 style={{
                     position: 'absolute',
-                    top: height - 8,
+                    transform: `translate3d(0px, ${height - 8}px, 0px)`,
                     height: 8,
                     width,
                 }}
@@ -533,7 +533,7 @@ function Table<T>({
                     style={{
                         position: 'absolute',
                         width: getXThumbHeight(),
-                        left:  getXTop(),
+                        transform: `translate3d(${getXTop()}px, 0px, 0px)`,
                         height: '100%',
                     }}
                     onMouseDown={(e) => {
@@ -628,6 +628,7 @@ function Table<T>({
                     <TableWrapperStyle
                         style={{
                             transform: getTransform(),
+                            width,
                         }}
                     >
                         {contentRow}
@@ -637,6 +638,7 @@ function Table<T>({
                     style={{
                         position: 'sticky',
                         transform: `translate3d(${translateX}px, 0px, 0px)`,
+                        width,
                         top: 0,
                         zIndex: 10
                     }}
@@ -647,6 +649,7 @@ function Table<T>({
                     style={{
                         position: 'sticky',
                         transform: `translate3d(${translateX}px, 0px, 0px)`,
+                        width,
                         top: height - (viewportStickyRowBottom?.[0]?.top || 0) - 1.5,
                         zIndex: 10
                     }}
