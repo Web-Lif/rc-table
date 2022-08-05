@@ -43,7 +43,7 @@
     "@umijs/fabric": "3.0.0",
     "@umijs/test": "4.0.11",
     "cross-env": "7.0.3",
-    "dumi": "1.1.46",
+    "dumi": "1.1.47",
     "father-build": "1.22.3",
     "gh-pages": "4.0.0",
     "lint-staged": "13.0.3",
