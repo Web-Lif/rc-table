@@ -52,7 +52,7 @@
     "yorkie": "2.0.0"
   },
   "dependencies": {
-    "styled-components": "5.3.5"
+    "styled-components": "5.3.6"
   },
   "license": "MIT"
 }
