@@ -158,6 +158,8 @@ function Table<T>({
         left: 0,
     });
 
+
+
     logTime('useViewportRows')
     const {
         scrollHeight,
@@ -175,6 +177,27 @@ function Table<T>({
         scrollLeft: scroll.left,
     });
     logTimeEnd('useViewportRows')
+
+    /**
+     * 如果数据发生改变, 则将X/Y滚动条同步到初始位置
+     */
+    useEffect(() => {
+        if (scrollHeight < scroll.top) {
+            setScroll(element => ({
+                top: 0,
+                left: element.left
+            }))
+        }
+
+        if (scrollWidth < scroll.left) {
+            setScroll(element => ({
+                top: element.top,
+                left: 0
+            }))
+        }
+    }, [rows])
+
+
 
     const scrollRow = viewportRows?.[0]
 

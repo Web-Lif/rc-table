@@ -9,13 +9,12 @@ title: 基础使用
 ---
 
 ```tsx
-import React from 'react';
-
 import { Table } from '@weblif/rc-table';
+import React, { useState } from 'react';
 
-const createRows = () => {
+const createRows = (index) => {
     const rows: Row[] = [];
-    for (let i = 0; i < 100; i += 1) {
+    for (let i = 0; i < index; i += 1) {
         const cells = [];
 
         let sticky;
@@ -57,33 +56,43 @@ const createRows = () => {
     return rows;
 };
 
-let rows = createRows();
-
 const BaseTable = () => {
+    const [data, setData] = useState(createRows(100));
     return (
-        <Table
-            width={1200}
-            debug
-            height={600}
-            rows={rows}
-            onRowMouseOver={(e, table) => {
-                const classNames = e.currentTarget.className.split(' ');
-                const className = classNames.find((className) =>
-                    className.includes('rc-table-row-'),
-                );
-                const elements = table.querySelectorAll(`.${className}`);
-                table.querySelectorAll(`.rc-table-row`).forEach((element) => {
-                    (element as HTMLElement).style.removeProperty('--rc-table-background-color');
-                });
-
-                elements.forEach((element) => {
-                    (element as HTMLElement).style.setProperty(
-                        '--rc-table-background-color',
-                        '#f5f5f5',
+        <>
+            <button
+                onClick={() => {
+                    setData(createRows(10));
+                }}
+            >
+                点击清空数据
+            </button>
+            <Table
+                width={1200}
+                debug
+                height={600}
+                rows={data}
+                onRowMouseOver={(e, table) => {
+                    const classNames = e.currentTarget.className.split(' ');
+                    const className = classNames.find((className) =>
+                        className.includes('rc-table-row-'),
                     );
-                });
-            }}
-        />
+                    const elements = table.querySelectorAll(`.${className}`);
+                    table.querySelectorAll(`.rc-table-row`).forEach((element) => {
+                        (element as HTMLElement).style.removeProperty(
+                            '--rc-table-background-color',
+                        );
+                    });
+
+                    elements.forEach((element) => {
+                        (element as HTMLElement).style.setProperty(
+                            '--rc-table-background-color',
+                            '#f5f5f5',
+                        );
+                    });
+                }}
+            />
+        </>
     );
 };
 
