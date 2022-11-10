@@ -182,14 +182,16 @@ function Table<T>({
      * 如果数据发生改变, 则将X/Y滚动条同步到初始位置
      */
     useEffect(() => {
-        if (scrollHeight < scroll.top) {
+        if (scrollHeight < scroll.top && tableRef.current) {
+            tableRef.current.scrollTop = 0
             setScroll(element => ({
                 top: 0,
                 left: element.left
             }))
         }
 
-        if (scrollWidth < scroll.left) {
+        if (scrollWidth < scroll.left && tableRef.current) {
+            tableRef.current.scrollLeft = 0
             setScroll(element => ({
                 top: element.top,
                 left: 0
@@ -678,6 +680,7 @@ function Table<T>({
                     }}
                 >
                     {viewportStickyRowBottom.map((row) => {
+                        debugger
                         return createRowElement(row, {
                             height: row.height,
                         }, 'StickyLeftRowWrapper')
