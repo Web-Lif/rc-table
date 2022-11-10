@@ -680,7 +680,6 @@ function Table<T>({
                     }}
                 >
                     {viewportStickyRowBottom.map((row) => {
-                        debugger
                         return createRowElement(row, {
                             height: row.height,
                         }, 'StickyLeftRowWrapper')
