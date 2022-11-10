@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { Cell, Row } from '../types'
 
 
@@ -27,7 +27,6 @@ export function useViewportRows<T>({
     scrollTop,
     scrollLeft,
 }: ViewportRowsArgs<T>) {
-
     const cacheScrollHeight = useRef<number>(-1)
 
     useMemo(() => {
