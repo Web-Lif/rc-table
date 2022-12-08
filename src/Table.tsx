@@ -88,7 +88,7 @@ interface RowClickParam<T> {
 }
 
 export const useTable = () => {
-    const table = useRef<TableParam>()
+    const table = useRef<TableParam>(null)
     return table
 }
 
