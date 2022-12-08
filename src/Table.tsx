@@ -187,8 +187,20 @@ function Table<T>({
                         left: scroll.left,
                         top: scroll.top
                     })
+                    if (resp.left && tableRef.current) {
+                        tableRef.current.scrollLeft = resp.left
+                    }
+                    if (resp.top && tableRef.current) {
+                        tableRef.current.scrollTop = resp.top
+                    }
                     setScroll(resp)
                 } else {
+                    if (param.left && tableRef.current) {
+                        tableRef.current.scrollLeft = param.left
+                    }
+                    if (param.top && tableRef.current) {
+                        tableRef.current.scrollTop = param.top
+                    }
                     setScroll({
                         left: param.left,
                         top: param.top
