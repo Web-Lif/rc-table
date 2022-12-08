@@ -179,7 +179,7 @@ function Table<T>({
         left: 0,
     });
 
-    if (table?.current) {
+    if (table) {
         table.current = {
             scrollTo: (param) => {
                 if (typeof param === 'function') {
