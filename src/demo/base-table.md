@@ -62,7 +62,7 @@ const BaseTable = () => {
         <>
             <button
                 onClick={() => {
-                    setData(createRows(10));
+                    setData(createRows(50));
                 }}
             >
                 点击清空数据

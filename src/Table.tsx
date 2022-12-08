@@ -1,4 +1,4 @@
-import React, { CSSProperties, Key, ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, Key, MutableRefObject, ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import TableRow from './Row';
 import TableCell from './Cell';
@@ -70,9 +70,26 @@ const ScrollBarThumb = styled.div`
     user-select: none;
 `
 
+interface TableParam {
+    /**
+     * 滚动到指定的坐标
+     */
+    scrollTo: (param: {top: number, left: number} | ((param: {top: number, left: number}) => {top: number, left: number})) => void
+
+    /**
+     * 获取滚动条的位置
+     */
+    getScroll: () => {top: number, left: number}
+}
+
 interface RowClickParam<T> {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
     row: Row<T>
+}
+
+export const useTable = () => {
+    const table = useRef<TableParam>()
+    return table
 }
 
 export interface TableProps<T> {
@@ -88,6 +105,9 @@ export interface TableProps<T> {
 
     /** 调试模式 */
     debug?: boolean
+
+    /** 表格的一些方法 */
+    table?: MutableRefObject<TableParam>
 
     /** 空数据的时候渲染的信息 */
     onEmptyRowsRenderer?: () => ReactElement
@@ -125,6 +145,7 @@ function Table<T>({
     height,
     rows,
     debug,
+    table,
     onCellRender,
     onRowRender,
     onRowClick,
@@ -158,6 +179,25 @@ function Table<T>({
         left: 0,
     });
 
+    if (table?.current) {
+        table.current = {
+            scrollTo: (param) => {
+                if (typeof param === 'function') {
+                    const resp = param?.({
+                        left: scroll.left,
+                        top: scroll.top
+                    })
+                    setScroll(resp)
+                } else {
+                    setScroll({
+                        left: param.left,
+                        top: param.top
+                    })
+                }
+            },
+            getScroll: () => scroll
+        }
+    }
 
 
     logTime('useViewportRows')
@@ -181,6 +221,7 @@ function Table<T>({
     /**
      * 如果数据发生改变, 则将X/Y滚动条同步到初始位置
      */
+    /*
     useEffect(() => {
         if (scrollHeight < scroll.top && tableRef.current) {
             tableRef.current.scrollTop = 0
@@ -198,8 +239,7 @@ function Table<T>({
             }))
         }
     }, [rows])
-
-
+    */
 
     const scrollRow = viewportRows?.[0]
 
