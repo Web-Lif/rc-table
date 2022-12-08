@@ -107,7 +107,7 @@ export interface TableProps<T> {
     debug?: boolean
 
     /** 表格的一些方法 */
-    table?: MutableRefObject<TableParam>
+    table?: MutableRefObject<TableParam | null>
 
     /** 空数据的时候渲染的信息 */
     onEmptyRowsRenderer?: () => ReactElement
